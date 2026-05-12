@@ -1,0 +1,111 @@
+# Bot Observability
+
+Shared observability stack for both bots without SSHing into servers.
+
+## Included Services
+
+* Uptime Kuma (status dashboard): http://127.0.0.1:3001
+* Grafana (log dashboard): http://127.0.0.1:3000
+* Loki (log storage)
+* Promtail (log shipping from bot log folders)
+
+## 1. Configure Environment
+
+1. Copy `.env.example` to `.env`.
+2. Set `GRAFANA_ADMIN_USER` and `GRAFANA_ADMIN_PASSWORD`.
+3. Set `HALO_LOG_PATH` and `PANDA_LOG_PATH` to absolute log directories on your host.
+
+## 2. Start Stack
+
+```powershell
+docker compose up -d
+```
+
+## 3. Access Dashboards
+
+* Uptime Kuma: `http://127.0.0.1:3001`
+* Grafana: `http://127.0.0.1:3000`
+
+Grafana includes a pre-provisioned Loki datasource.
+
+## 3.1 Make Dashboards Web Accessible (No SSH)
+
+Use a reverse proxy with TLS in front of local-only container ports.
+
+Required server configuration:
+
+1. DNS records:
+   * `grafana.<your-domain>` -> server public IP
+   * `kuma.<your-domain>` -> server public IP
+2. Firewall:
+   * Open inbound `80/tcp` and `443/tcp`.
+   * Keep `3000`, `3001`, and `3100` closed publicly (containers bind to `127.0.0.1` by default).
+3. Reverse proxy:
+   * Configure Nginx (or Caddy/Traefik) to proxy HTTPS traffic to `127.0.0.1:3000` (Grafana) and `127.0.0.1:3001` (Kuma).
+   * Example config: `deploy/nginx-observability.conf.example`.
+4. TLS certificates:
+   * Use Let's Encrypt certificates for both hostnames.
+
+Optional hardening:
+
+* Restrict Grafana/Kuma access by IP allow-list in proxy.
+* Add Auth at proxy layer in addition to app auth.
+
+## 4. Add Bot Monitors (Uptime Kuma)
+
+Recommended monitors:
+
+* HTTP(s) monitor to bot health endpoint (if you add one)
+* Push monitor (heartbeat style)
+* TCP monitor to known bot-adjacent service
+
+If the bots do not expose HTTP health yet, use Push monitors and have each bot send periodic heartbeats.
+
+## 5. Verify Logs in Grafana
+
+In Grafana Explore:
+
+* Halo logs query: `{service="halo-bot"}`
+* Panda logs query: `{service="panda-bot"}`
+
+## Notes
+
+* This project is intentionally separate from bot codebases.
+* Keep it as shared infra for all current/future bots.
+* Add alerts later (Grafana Alerting or Kuma notifications to Discord).
+
+## CI/CD (Push = Deploy)
+
+This repo includes GitHub Actions workflows:
+
+* `.github/workflows/validate-compose.yml` validates Compose config on PRs and pushes.
+* `.github/workflows/deploy.yml` validates, then deploys automatically on pushes to `main` (and supports manual runs).
+
+Deployment safety controls included:
+
+* Validation gate (`deploy` waits for `validate` to pass)
+* Concurrency lock (single active deployment)
+* GitHub `production` environment target (use environment protection rules)
+* Automatic rollback to previous release bundle if deployment fails
+
+Configure these repository secrets before first deployment:
+
+* `OBSERVABILITY_HOST`: server hostname or IP
+* `OBSERVABILITY_USER`: SSH username
+* `OBSERVABILITY_SSH_KEY`: private key used by Actions
+* `OBSERVABILITY_PORT`: SSH port (optional, defaults to 22)
+* `OBSERVABILITY_TARGET_PATH`: absolute deployment directory on host
+* `GRAFANA_ADMIN_USER`: Grafana admin username
+* `GRAFANA_ADMIN_PASSWORD`: Grafana admin password
+* `HALO_LOG_PATH`: absolute Halo bot logs path on host
+* `PANDA_LOG_PATH`: absolute Panda bot logs path on host
+
+Deployment behavior:
+
+1. Bundle repo contents.
+2. Upload bundle to host.
+3. Extract into `OBSERVABILITY_TARGET_PATH/current`.
+4. Generate `.env` from secrets.
+5. Run `docker compose pull` and `docker compose up -d --remove-orphans`.
+6. If any deploy step fails, restore previous release and restart stack from backup.
+# bot-observability
