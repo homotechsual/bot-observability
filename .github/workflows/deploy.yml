@@ -38,6 +38,26 @@ jobs:
         run: |
           git ls-files -z | grep -zv '^.github/' | tar --null -T - -czf observability.tar.gz
 
+      - name: Debug SSH host key fingerprints
+        run: |
+          set -eu
+          HOST="${{ secrets.OBSERVABILITY_HOST }}"
+          PORT="${{ secrets.OBSERVABILITY_PORT || '22' }}"
+          echo "Checking SSH host keys for ${HOST}:${PORT}"
+          ssh-keyscan -p "$PORT" -t rsa,ecdsa,ed25519 "$HOST" 2>/dev/null > /tmp/hostkeys.scan
+          if [ ! -s /tmp/hostkeys.scan ]; then
+            echo "No host keys were returned by ssh-keyscan."
+            exit 1
+          fi
+          echo "Runner-visible host key fingerprints:"
+          while read -r line; do
+            keytype=$(echo "$line" | awk '{print $2}')
+            keydata=$(echo "$line" | awk '{print $3}')
+            printf "%s %s\n" "$keytype" "$keydata" > /tmp/key.pub
+            fp=$(ssh-keygen -l -E sha256 -f /tmp/key.pub | awk '{print $2}')
+            echo "$keytype => $fp"
+          done < /tmp/hostkeys.scan
+
       - name: Copy bundle to host
         uses: appleboy/scp-action@v1
         with:
