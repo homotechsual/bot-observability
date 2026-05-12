@@ -36,7 +36,7 @@ jobs:
 
       - name: Create deployment bundle
         run: |
-          tar --exclude=.git --exclude=.github --exclude=observability.tar.gz -czf observability.tar.gz .
+          git ls-files -z | grep -zv '^.github/' | tar --null -T - -czf observability.tar.gz
 
       - name: Copy bundle to host
         uses: appleboy/scp-action@v1
