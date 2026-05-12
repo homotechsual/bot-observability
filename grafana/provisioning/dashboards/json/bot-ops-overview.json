@@ -87,11 +87,11 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "up{job=\"uptime-kuma\"}",
+          "expr": "up{job=\"prometheus\"}",
           "refId": "A"
         }
       ],
-      "title": "Uptime Kuma Scrape Health",
+      "title": "Prometheus Health",
       "type": "stat"
     },
     {

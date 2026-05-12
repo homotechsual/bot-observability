@@ -104,6 +104,7 @@ jobs:
             rm -f /tmp/observability.tar.gz
 
             cd "$RELEASE_PATH"
+            docker compose down
             docker compose pull
             docker compose up -d --remove-orphans
             docker compose ps
