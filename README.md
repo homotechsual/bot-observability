@@ -8,6 +8,7 @@ Shared observability stack for both bots without SSHing into servers.
 * Grafana (log dashboard): http://127.0.0.1:3000
 * Loki (log storage)
 * Promtail (log shipping from bot log folders)
+* Prometheus (metrics for Grafana): http://127.0.0.1:9090
 
 ## 1. Configure Environment
 
@@ -26,7 +27,15 @@ docker compose up -d
 * Uptime Kuma: `http://127.0.0.1:3001`
 * Grafana: `http://127.0.0.1:3000`
 
-Grafana includes a pre-provisioned Loki datasource.
+Grafana includes pre-provisioned datasources for Loki and Prometheus.
+
+A starter dashboard named `Bot Ops Overview` is auto-provisioned with:
+
+* Uptime Kuma scrape health (Prometheus)
+* Error/warning stats and trends (Loki)
+* Recent error logs (Loki)
+
+If the `Uptime Kuma Scrape Health` panel shows no data, enable Prometheus metrics in Uptime Kuma settings and refresh Grafana.
 
 ## 3.1 Make Dashboards Web Accessible (No SSH)
 
@@ -108,4 +117,5 @@ Deployment behavior:
 4. Generate `.env` from secrets.
 5. Run `docker compose pull` and `docker compose up -d --remove-orphans`.
 6. If any deploy step fails, restore previous release and restart stack from backup.
+
 # bot-observability
