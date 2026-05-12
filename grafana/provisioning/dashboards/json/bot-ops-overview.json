@@ -569,7 +569,8 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "clamp_max(max(monitor_status{job=\"uptime-kuma\", monitor_name=~\".*[Hh]alo.*\"}) or vector(0), 1)",
+          "expr": "max(monitor_status{job=\"uptime-kuma\", monitor_name=~\".*([Hh]alo|[Hh]alo[Cc]ommunity).*\"})",
+          "instant": true,
           "refId": "A"
         }
       ],
@@ -642,7 +643,8 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "clamp_max(max(monitor_status{job=\"uptime-kuma\", monitor_name=~\".*[Pp]anda.*\"}) or vector(0), 1)",
+          "expr": "max(monitor_status{job=\"uptime-kuma\", monitor_name=~\".*([Pp]anda|[Pp]andamonium).*\"})",
+          "instant": true,
           "refId": "A"
         }
       ],
@@ -668,6 +670,6 @@
   "timezone": "",
   "title": "Bot Ops Overview",
   "uid": "bot-ops-overview",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }
