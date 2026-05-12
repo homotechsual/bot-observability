@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Validate docker-compose syntax
         env:
@@ -32,14 +32,14 @@ jobs:
       name: production
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Create deployment bundle
         run: |
-          tar --exclude=.git --exclude=.github -czf observability.tar.gz .
+          tar --exclude=.git --exclude=.github --exclude=observability.tar.gz -czf observability.tar.gz .
 
       - name: Copy bundle to host
-        uses: appleboy/scp-action@v0.1.7
+        uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.OBSERVABILITY_HOST }}
           username: ${{ secrets.OBSERVABILITY_USER }}
@@ -49,7 +49,7 @@ jobs:
           target: /tmp
 
       - name: Deploy stack on host
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.OBSERVABILITY_HOST }}
           username: ${{ secrets.OBSERVABILITY_USER }}
