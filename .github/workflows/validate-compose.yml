@@ -1,0 +1,22 @@
+name: Validate Compose
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate docker-compose syntax
+        env:
+          GRAFANA_ADMIN_USER: ci-admin
+          GRAFANA_ADMIN_PASSWORD: ci-password
+          HALO_LOG_PATH: /tmp/halo-logs
+          PANDA_LOG_PATH: /tmp/panda-logs
+        run: docker compose -f docker-compose.yml config >/dev/null

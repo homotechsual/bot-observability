@@ -1,0 +1,112 @@
+name: Deploy Observability
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-observability
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate docker-compose syntax
+        env:
+          GRAFANA_ADMIN_USER: ci-admin
+          GRAFANA_ADMIN_PASSWORD: ci-password
+          HALO_LOG_PATH: /tmp/halo-logs
+          PANDA_LOG_PATH: /tmp/panda-logs
+        run: docker compose -f docker-compose.yml config >/dev/null
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create deployment bundle
+        run: |
+          tar --exclude=.git --exclude=.github -czf observability.tar.gz .
+
+      - name: Copy bundle to host
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.OBSERVABILITY_HOST }}
+          username: ${{ secrets.OBSERVABILITY_USER }}
+          key: ${{ secrets.OBSERVABILITY_SSH_KEY }}
+          port: ${{ secrets.OBSERVABILITY_PORT || '22' }}
+          source: observability.tar.gz
+          target: /tmp
+
+      - name: Deploy stack on host
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.OBSERVABILITY_HOST }}
+          username: ${{ secrets.OBSERVABILITY_USER }}
+          key: ${{ secrets.OBSERVABILITY_SSH_KEY }}
+          port: ${{ secrets.OBSERVABILITY_PORT || '22' }}
+          script_stop: true
+          script: |
+            set -eu
+
+            TARGET_PATH="${{ secrets.OBSERVABILITY_TARGET_PATH }}"
+            RELEASE_PATH="$TARGET_PATH/current"
+            BACKUP_PATH="$TARGET_PATH/backups"
+            TIMESTAMP=$(date +%Y%m%d%H%M%S)
+            INCOMING_PATH="$TARGET_PATH/incoming-$TIMESTAMP"
+            BACKUP_FILE="$BACKUP_PATH/release-$TIMESTAMP.tar.gz"
+
+            mkdir -p "$RELEASE_PATH"
+            mkdir -p "$BACKUP_PATH"
+            mkdir -p "$INCOMING_PATH"
+
+            HAS_BACKUP=0
+            if [ -n "$(ls -A "$RELEASE_PATH" 2>/dev/null || true)" ]; then
+              tar -czf "$BACKUP_FILE" -C "$RELEASE_PATH" .
+              HAS_BACKUP=1
+            fi
+
+            rollback() {
+              echo "Deployment failed. Attempting rollback..."
+              if [ "$HAS_BACKUP" -eq 1 ]; then
+                find "$RELEASE_PATH" -mindepth 1 -maxdepth 1 -exec rm -rf {} \;
+                tar -xzf "$BACKUP_FILE" -C "$RELEASE_PATH"
+                cd "$RELEASE_PATH"
+                docker compose up -d --remove-orphans || true
+              fi
+              rm -rf "$INCOMING_PATH"
+              rm -f /tmp/observability.tar.gz
+              exit 1
+            }
+            trap rollback ERR
+
+            tar -xzf /tmp/observability.tar.gz -C "$INCOMING_PATH"
+
+            cat > "$INCOMING_PATH/.env" << 'EOF'
+            GRAFANA_ADMIN_USER=${{ secrets.GRAFANA_ADMIN_USER }}
+            GRAFANA_ADMIN_PASSWORD=${{ secrets.GRAFANA_ADMIN_PASSWORD }}
+            HALO_LOG_PATH=${{ secrets.HALO_LOG_PATH }}
+            PANDA_LOG_PATH=${{ secrets.PANDA_LOG_PATH }}
+            EOF
+
+            find "$RELEASE_PATH" -mindepth 1 -maxdepth 1 -exec rm -rf {} \;
+            cp -a "$INCOMING_PATH"/. "$RELEASE_PATH"/
+            rm -rf "$INCOMING_PATH"
+            rm -f /tmp/observability.tar.gz
+
+            cd "$RELEASE_PATH"
+            docker compose pull
+            docker compose up -d --remove-orphans
+            docker compose ps
+            trap - ERR
+            docker image prune -f
