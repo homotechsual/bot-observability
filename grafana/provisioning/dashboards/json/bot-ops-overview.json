@@ -156,7 +156,7 @@
           "refId": "A"
         }
       ],
-      "title": "Halo Errors (24h)",
+      "title": "HaloCommunityBot Errors (24h)",
       "type": "stat"
     },
     {
@@ -221,7 +221,7 @@
           "refId": "A"
         }
       ],
-      "title": "Panda Errors (24h)",
+      "title": "PandaBot Errors (24h)",
       "type": "stat"
     },
     {
@@ -300,7 +300,32 @@
             "mode": "palette-classic"
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*halo-bot.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "HaloCommunityBot"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*panda-bot.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "PandaBot"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -346,7 +371,32 @@
             "mode": "palette-classic"
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*halo-bot.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "HaloCommunityBot"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*panda-bot.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "PandaBot"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -398,7 +448,7 @@
         "enableLogDetails": true,
         "prettifyLogMessage": false,
         "showCommonLabels": false,
-        "showLabels": false,
+        "showLabels": true,
         "showTime": true,
         "sortOrder": "Descending",
         "wrapLogMessage": true
@@ -409,12 +459,12 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{service=~\"halo-bot|panda-bot\"} |= \"[ERR]\"",
+          "expr": "{service=~\"halo-bot|panda-bot\"} |= \"[ERR]\" | label_format bot_name=\"{{ if eq .service \\\"panda-bot\\\" }}PandaBot{{ else if eq .service \\\"halo-bot\\\" }}HaloCommunityBot{{ else }}{{ .service }}{{ end }}\"",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "Recent Errors",
+      "title": "Recent Errors (Bot Name Shown)",
       "type": "logs"
     },
     {
@@ -434,7 +484,7 @@
         "enableLogDetails": true,
         "prettifyLogMessage": false,
         "showCommonLabels": false,
-        "showLabels": false,
+        "showLabels": true,
         "showTime": true,
         "sortOrder": "Descending",
         "wrapLogMessage": true
@@ -445,12 +495,12 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{service=~\"halo-bot|panda-bot\"} |~ \"\\\\[(WRN|ERR)\\\\]\"",
+          "expr": "{service=~\"halo-bot|panda-bot\"} |~ \"\\\\[(WRN|ERR)\\\\]\" | label_format bot_name=\"{{ if eq .service \\\"panda-bot\\\" }}PandaBot{{ else if eq .service \\\"halo-bot\\\" }}HaloCommunityBot{{ else }}{{ .service }}{{ end }}\"",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "Recent Warnings + Errors",
+      "title": "Recent Warnings + Errors (Bot Name Shown)",
       "type": "logs"
     }
   ],
