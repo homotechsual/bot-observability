@@ -44,6 +44,7 @@ jobs:
           host: ${{ secrets.OBSERVABILITY_HOST }}
           username: ${{ secrets.OBSERVABILITY_USER }}
           key: ${{ secrets.OBSERVABILITY_SSH_KEY }}
+          fingerprint: ${{ secrets.OBSERVABILITY_FINGERPRINT }}
           port: ${{ secrets.OBSERVABILITY_PORT || '22' }}
           source: observability.tar.gz
           target: /tmp
@@ -54,8 +55,8 @@ jobs:
           host: ${{ secrets.OBSERVABILITY_HOST }}
           username: ${{ secrets.OBSERVABILITY_USER }}
           key: ${{ secrets.OBSERVABILITY_SSH_KEY }}
+          fingerprint: ${{ secrets.OBSERVABILITY_FINGERPRINT }}
           port: ${{ secrets.OBSERVABILITY_PORT || '22' }}
-          script_stop: true
           script: |
             set -eu
 
