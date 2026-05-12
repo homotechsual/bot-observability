@@ -569,7 +569,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "max(monitor_status{job=\"uptime-kuma\", monitor_name=~\"(?i).*halocommunitybot.*\"})",
+          "expr": "clamp_max(max(monitor_status{job=\"uptime-kuma\", monitor_name=~\".*[Hh]alo.*\"}) or vector(0), 1)",
           "refId": "A"
         }
       ],
@@ -642,7 +642,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "max(monitor_status{job=\"uptime-kuma\", monitor_name=~\"(?i).*pandabot.*\"})",
+          "expr": "clamp_max(max(monitor_status{job=\"uptime-kuma\", monitor_name=~\".*[Pp]anda.*\"}) or vector(0), 1)",
           "refId": "A"
         }
       ],
