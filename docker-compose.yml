@@ -54,6 +54,8 @@ services:
     restart: unless-stopped
     ports:
       - "127.0.0.1:9090:9090"
+    environment:
+      - KUMA_METRICS_API_KEY=${KUMA_METRICS_API_KEY}
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"

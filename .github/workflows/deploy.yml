@@ -96,6 +96,7 @@ jobs:
             GRAFANA_ADMIN_PASSWORD=${{ secrets.GRAFANA_ADMIN_PASSWORD }}
             HALO_LOG_PATH=${{ secrets.HALO_LOG_PATH }}
             PANDA_LOG_PATH=${{ secrets.PANDA_LOG_PATH }}
+            KUMA_METRICS_API_KEY=${{ secrets.KUMA_METRICS_API_KEY }}
             EOF
 
             find "$RELEASE_PATH" -mindepth 1 -maxdepth 1 -exec rm -rf {} \;

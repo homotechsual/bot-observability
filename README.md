@@ -15,6 +15,7 @@ Shared observability stack for both bots without SSHing into servers.
 1. Copy `.env.example` to `.env`.
 2. Set `GRAFANA_ADMIN_USER` and `GRAFANA_ADMIN_PASSWORD`.
 3. Set `HALO_LOG_PATH` and `PANDA_LOG_PATH` to absolute log directories on your host.
+4. If Uptime Kuma metrics auth is enabled, set `KUMA_METRICS_API_KEY`.
 
 ## 2. Start Stack
 
@@ -108,6 +109,7 @@ Configure these repository secrets before first deployment:
 * `GRAFANA_ADMIN_PASSWORD`: Grafana admin password
 * `HALO_LOG_PATH`: absolute Halo bot logs path on host
 * `PANDA_LOG_PATH`: absolute Panda bot logs path on host
+* `KUMA_METRICS_API_KEY`: Uptime Kuma Prometheus API key for `/metrics` scraping when auth is enabled
 
 Deployment behavior:
 
