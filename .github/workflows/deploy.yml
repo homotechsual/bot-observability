@@ -126,13 +126,30 @@ jobs:
 
           if docker volume inspect "$KUMA_VOLUME_NAME" >/dev/null 2>&1; then
             echo "[deploy] Backing up Uptime Kuma data volume ($KUMA_VOLUME_NAME)"
+            BACKUP_BASENAME="$(basename "$KUMA_BACKUP_FILE")"
+            BACKUP_CMD="tar -czf /backup/$BACKUP_BASENAME -C /source ."
+            BACKUP_ERR_FILE="$(mktemp)"
+
             if ! docker run --rm \
               -v "$KUMA_VOLUME_NAME:/source:ro" \
               -v "$BACKUP_PATH:/backup" \
               alpine:3.20 \
-              sh -c "tar -czf /backup/$(basename \"$KUMA_BACKUP_FILE\") -C /source ."; then
-              echo "[deploy] WARNING: Failed to create Kuma data backup snapshot"
+              sh -c "$BACKUP_CMD" 2>"$BACKUP_ERR_FILE"; then
+              echo "[deploy] WARNING: Failed Kuma backup using alpine:3.20. Retrying with busybox:1.36"
+              if ! docker run --rm \
+                -v "$KUMA_VOLUME_NAME:/source:ro" \
+                -v "$BACKUP_PATH:/backup" \
+                busybox:1.36 \
+                sh -c "$BACKUP_CMD" 2>>"$BACKUP_ERR_FILE"; then
+                echo "[deploy] WARNING: Failed to create Kuma data backup snapshot"
+                cat "$BACKUP_ERR_FILE" || true
+              else
+                echo "[deploy] Kuma backup snapshot created with busybox:1.36: $KUMA_BACKUP_FILE"
+              fi
+            else
+              echo "[deploy] Kuma backup snapshot created: $KUMA_BACKUP_FILE"
             fi
+            rm -f "$BACKUP_ERR_FILE"
           else
             echo "[deploy] Kuma data volume not found yet; skipping Kuma backup"
           fi
