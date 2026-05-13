@@ -167,6 +167,9 @@ jobs:
 
           find "$RELEASE_PATH" -mindepth 1 -maxdepth 1 -exec rm -rf {} \;
           cp -a "$INCOMING_PATH"/. "$RELEASE_PATH"/
+          if [ -f "$RELEASE_PATH/deploy/reset-observability-logs.sh" ]; then
+            chmod 755 "$RELEASE_PATH/deploy/reset-observability-logs.sh"
+          fi
           rm -rf "$INCOMING_PATH"
           rm -f /tmp/observability.tar.gz
 
