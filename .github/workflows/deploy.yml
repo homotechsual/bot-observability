@@ -51,15 +51,23 @@ jobs:
 
           : "${OBSERVABILITY_HOST:?OBSERVABILITY_HOST is required}"
           : "${OBSERVABILITY_USER:?OBSERVABILITY_USER is required}"
+          : "${OBSERVABILITY_SSH_KEY:?OBSERVABILITY_SSH_KEY is required}"
+
+          echo "[deploy] Preparing SSH client"
 
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          printf '%s' "$OBSERVABILITY_SSH_KEY" > ~/.ssh/id_ed25519
+          # Normalize potential CRLF line endings in multi-line private key secrets.
+          printf '%s' "$OBSERVABILITY_SSH_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -p "$OBS_PORT" "$OBSERVABILITY_HOST" >> ~/.ssh/known_hosts
+          touch ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
-          scp -P "$OBS_PORT" -i ~/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTimeout=30 \
+          SSH_OPTS="-i ~/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=~/.ssh/known_hosts"
+
+          echo "[deploy] Uploading bundle"
+
+          timeout 120s scp -P "$OBS_PORT" $SSH_OPTS \
             observability.tar.gz "$OBSERVABILITY_USER@$OBSERVABILITY_HOST:/tmp/observability.tar.gz"
 
           cat > deploy-remote.sh << 'REMOTE_SCRIPT'
@@ -124,10 +132,14 @@ jobs:
           docker image prune -f
           REMOTE_SCRIPT
 
-          scp -P "$OBS_PORT" -i ~/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTimeout=30 \
+          echo "[deploy] Uploading remote deploy script"
+
+          timeout 120s scp -P "$OBS_PORT" $SSH_OPTS \
             deploy-remote.sh "$OBSERVABILITY_USER@$OBSERVABILITY_HOST:/tmp/deploy-remote.sh"
 
-          timeout 45m ssh -p "$OBS_PORT" -i ~/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTimeout=30 \
+          echo "[deploy] Executing remote deploy script"
+
+          timeout 45m ssh -p "$OBS_PORT" $SSH_OPTS \
             "$OBSERVABILITY_USER@$OBSERVABILITY_HOST" "bash /tmp/deploy-remote.sh '${{ secrets.OBSERVABILITY_TARGET_PATH }}'"
 
           rm -f deploy-remote.sh
