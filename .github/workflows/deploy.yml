@@ -113,6 +113,7 @@ jobs:
           BACKUP_FILE="$BACKUP_PATH/release-$TIMESTAMP.tar.gz"
           KUMA_VOLUME_NAME="bot-observability-kuma-data"
           KUMA_BACKUP_FILE="$BACKUP_PATH/kuma-data-$TIMESTAMP.tar.gz"
+          KUMA_BACKUP_RETENTION=5
 
           mkdir -p "$RELEASE_PATH"
           mkdir -p "$BACKUP_PATH"
@@ -150,6 +151,17 @@ jobs:
               echo "[deploy] Kuma backup snapshot created: $KUMA_BACKUP_FILE"
             fi
             rm -f "$BACKUP_ERR_FILE"
+
+            # Keep only the newest N Kuma backups to avoid unbounded storage growth.
+            echo "[deploy] Applying Kuma backup retention: keep newest $KUMA_BACKUP_RETENTION snapshots"
+            old_kuma_backups=$(ls -1t "$BACKUP_PATH"/kuma-data-*.tar.gz 2>/dev/null | tail -n +$((KUMA_BACKUP_RETENTION + 1)) || true)
+            if [ -n "$old_kuma_backups" ]; then
+              echo "$old_kuma_backups" | while IFS= read -r backup_file; do
+                [ -n "$backup_file" ] || continue
+                rm -f "$backup_file"
+                echo "[deploy] Pruned old Kuma backup: $backup_file"
+              done
+            fi
           else
             echo "[deploy] Kuma data volume not found yet; skipping Kuma backup"
           fi
