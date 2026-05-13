@@ -113,6 +113,7 @@ jobs:
           BACKUP_FILE="$BACKUP_PATH/release-$TIMESTAMP.tar.gz"
           KUMA_VOLUME_NAME="bot-observability-kuma-data"
           KUMA_BACKUP_FILE="$BACKUP_PATH/kuma-data-$TIMESTAMP.tar.gz"
+          RELEASE_BACKUP_RETENTION=5
           KUMA_BACKUP_RETENTION=5
 
           mkdir -p "$RELEASE_PATH"
@@ -123,6 +124,17 @@ jobs:
           if [ -n "$(ls -A "$RELEASE_PATH" 2>/dev/null || true)" ]; then
             tar -czf "$BACKUP_FILE" -C "$RELEASE_PATH" .
             HAS_BACKUP=1
+
+            # Keep only the newest N release backups to avoid unbounded storage growth.
+            echo "[deploy] Applying release backup retention: keep newest $RELEASE_BACKUP_RETENTION snapshots"
+            old_release_backups=$(ls -1t "$BACKUP_PATH"/release-*.tar.gz 2>/dev/null | tail -n +$((RELEASE_BACKUP_RETENTION + 1)) || true)
+            if [ -n "$old_release_backups" ]; then
+              echo "$old_release_backups" | while IFS= read -r backup_file; do
+                [ -n "$backup_file" ] || continue
+                rm -f "$backup_file"
+                echo "[deploy] Pruned old release backup: $backup_file"
+              done
+            fi
           fi
 
           if docker volume inspect "$KUMA_VOLUME_NAME" >/dev/null 2>&1; then
