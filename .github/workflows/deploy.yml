@@ -62,8 +62,10 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           touch ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
+          mkdir -p ~/.ssh/controlmasters
+          chmod 700 ~/.ssh/controlmasters
 
-          SSH_OPTS="-i ~/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=~/.ssh/known_hosts -o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o PubkeyAuthentication=yes -o NumberOfPasswordPrompts=0"
+          SSH_OPTS="-i ~/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=~/.ssh/known_hosts -o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o PubkeyAuthentication=yes -o NumberOfPasswordPrompts=0 -o ControlMaster=auto -o ControlPersist=10m -o ControlPath=~/.ssh/controlmasters/%r@%h:%p"
 
           echo "[deploy] Skipping standalone SSH probe to reduce fail2ban risk"
 
@@ -140,4 +142,5 @@ jobs:
           timeout 45m ssh -p "$OBS_PORT" $SSH_OPTS \
             "$OBSERVABILITY_USER@$OBSERVABILITY_HOST" "bash /tmp/deploy-remote.sh '${{ secrets.OBSERVABILITY_TARGET_PATH }}'"
 
+          ssh -p "$OBS_PORT" $SSH_OPTS -O exit "$OBSERVABILITY_USER@$OBSERVABILITY_HOST" >/dev/null 2>&1 || true
           rm -f deploy-remote.sh
