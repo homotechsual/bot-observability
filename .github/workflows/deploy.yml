@@ -55,6 +55,7 @@ jobs:
           username: ${{ secrets.OBSERVABILITY_USER }}
           key: ${{ secrets.OBSERVABILITY_SSH_KEY }}
           port: ${{ secrets.OBSERVABILITY_PORT || '22' }}
+          command_timeout: 45m
           script: |
             set -eu
 
