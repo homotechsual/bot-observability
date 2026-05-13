@@ -66,6 +66,7 @@ jobs:
           chmod 700 ~/.ssh/controlmasters
 
           SSH_OPTS="-i ~/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=~/.ssh/known_hosts -o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o PubkeyAuthentication=yes -o NumberOfPasswordPrompts=0 -o ControlMaster=auto -o ControlPersist=10m -o ControlPath=~/.ssh/controlmasters/%r@%h:%p"
+          SSH_AF_OPT=""
 
           echo "[deploy] Skipping standalone SSH probe to reduce fail2ban risk"
 
@@ -133,14 +134,41 @@ jobs:
 
           echo "[deploy] Uploading deployment artifacts"
 
-          timeout 180s scp -P "$OBS_PORT" $SSH_OPTS \
+          SCP_ERR_FILE=$(mktemp)
+          if ! timeout 180s scp -P "$OBS_PORT" $SSH_OPTS \
             observability.tar.gz deploy-remote.sh \
-            "$OBSERVABILITY_USER@$OBSERVABILITY_HOST:/tmp/"
+            "$OBSERVABILITY_USER@$OBSERVABILITY_HOST:/tmp/" 2>"$SCP_ERR_FILE"; then
+            if grep -qi "Network is unreachable" "$SCP_ERR_FILE"; then
+              echo "[deploy] Network unreachable with default address family; retrying upload with IPv4"
+              SSH_AF_OPT="-4"
+              timeout 180s scp $SSH_AF_OPT -P "$OBS_PORT" $SSH_OPTS \
+                observability.tar.gz deploy-remote.sh \
+                "$OBSERVABILITY_USER@$OBSERVABILITY_HOST:/tmp/"
+            else
+              cat "$SCP_ERR_FILE"
+              rm -f "$SCP_ERR_FILE"
+              exit 1
+            fi
+          fi
+          rm -f "$SCP_ERR_FILE"
 
           echo "[deploy] Executing remote deploy script"
 
-          timeout 45m ssh -p "$OBS_PORT" $SSH_OPTS \
-            "$OBSERVABILITY_USER@$OBSERVABILITY_HOST" "bash /tmp/deploy-remote.sh '${{ secrets.OBSERVABILITY_TARGET_PATH }}'"
+          SSH_ERR_FILE=$(mktemp)
+          if ! timeout 45m ssh $SSH_AF_OPT -p "$OBS_PORT" $SSH_OPTS \
+            "$OBSERVABILITY_USER@$OBSERVABILITY_HOST" "bash /tmp/deploy-remote.sh '${{ secrets.OBSERVABILITY_TARGET_PATH }}'" 2>"$SSH_ERR_FILE"; then
+            if [ -z "$SSH_AF_OPT" ] && grep -qi "Network is unreachable" "$SSH_ERR_FILE"; then
+              echo "[deploy] Network unreachable during remote execution; retrying with IPv4"
+              SSH_AF_OPT="-4"
+              timeout 45m ssh $SSH_AF_OPT -p "$OBS_PORT" $SSH_OPTS \
+                "$OBSERVABILITY_USER@$OBSERVABILITY_HOST" "bash /tmp/deploy-remote.sh '${{ secrets.OBSERVABILITY_TARGET_PATH }}'"
+            else
+              cat "$SSH_ERR_FILE"
+              rm -f "$SSH_ERR_FILE"
+              exit 1
+            fi
+          fi
+          rm -f "$SSH_ERR_FILE"
 
-          ssh -p "$OBS_PORT" $SSH_OPTS -O exit "$OBSERVABILITY_USER@$OBSERVABILITY_HOST" >/dev/null 2>&1 || true
+          ssh $SSH_AF_OPT -p "$OBS_PORT" $SSH_OPTS -O exit "$OBSERVABILITY_USER@$OBSERVABILITY_HOST" >/dev/null 2>&1 || true
           rm -f deploy-remote.sh
