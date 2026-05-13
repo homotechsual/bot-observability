@@ -110,6 +110,8 @@ jobs:
           TIMESTAMP=$(date +%Y%m%d%H%M%S)
           INCOMING_PATH="$TARGET_PATH/incoming-$TIMESTAMP"
           BACKUP_FILE="$BACKUP_PATH/release-$TIMESTAMP.tar.gz"
+          KUMA_VOLUME_NAME="bot-observability-kuma-data"
+          KUMA_BACKUP_FILE="$BACKUP_PATH/kuma-data-$TIMESTAMP.tar.gz"
 
           mkdir -p "$RELEASE_PATH"
           mkdir -p "$BACKUP_PATH"
@@ -119,6 +121,19 @@ jobs:
           if [ -n "$(ls -A "$RELEASE_PATH" 2>/dev/null || true)" ]; then
             tar -czf "$BACKUP_FILE" -C "$RELEASE_PATH" .
             HAS_BACKUP=1
+          fi
+
+          if docker volume inspect "$KUMA_VOLUME_NAME" >/dev/null 2>&1; then
+            echo "[deploy] Backing up Uptime Kuma data volume ($KUMA_VOLUME_NAME)"
+            if ! docker run --rm \
+              -v "$KUMA_VOLUME_NAME:/source:ro" \
+              -v "$BACKUP_PATH:/backup" \
+              alpine:3.20 \
+              sh -c "tar -czf /backup/$(basename \"$KUMA_BACKUP_FILE\") -C /source ."; then
+              echo "[deploy] WARNING: Failed to create Kuma data backup snapshot"
+            fi
+          else
+            echo "[deploy] Kuma data volume not found yet; skipping Kuma backup"
           fi
 
           rollback() {

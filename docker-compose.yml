@@ -70,4 +70,5 @@ volumes:
   grafana-data:
   loki-data:
   kuma-data:
+    name: bot-observability-kuma-data
   prometheus-data:

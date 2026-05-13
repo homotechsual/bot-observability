@@ -120,4 +120,24 @@ Deployment behavior:
 5. Run `docker compose pull` and `docker compose up -d --remove-orphans`.
 6. If any deploy step fails, restore previous release and restart stack from backup.
 
+## Uptime Kuma Data Persistence and Backup
+
+Uptime Kuma state (monitors, settings, notifications, API keys) is stored in a dedicated named Docker volume:
+
+* `bot-observability-kuma-data`
+
+This volume is independent from release files under `current`, so deploys and release rollbacks do not overwrite Kuma config.
+
+During each GitHub Actions deploy, a snapshot backup of Kuma data is created in:
+
+* `OBSERVABILITY_TARGET_PATH/backups/kuma-data-YYYYMMDDHHMMSS.tar.gz`
+
+To restore Kuma data from a snapshot on the server:
+
+```bash
+docker compose stop uptime-kuma
+docker run --rm -v bot-observability-kuma-data:/target -v /opt/bot-observability/backups:/backup alpine:3.20 sh -c "rm -rf /target/* && tar -xzf /backup/kuma-data-YYYYMMDDHHMMSS.tar.gz -C /target"
+docker compose up -d uptime-kuma
+```
+
 # bot-observability
