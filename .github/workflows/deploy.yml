@@ -37,6 +37,7 @@ jobs:
       - name: Create deployment bundle
         run: |
           git ls-files -z | grep -zv '^.github/' | tar --null -T - -czf observability.tar.gz
+          printf '%s' "$GITHUB_SHA" > deploy.sha
 
       - name: Deploy stack over SSH
         env:
@@ -145,7 +146,7 @@ jobs:
               docker compose up -d --remove-orphans || true
             fi
             rm -rf "$INCOMING_PATH"
-            rm -f /tmp/observability.tar.gz
+            rm -f /tmp/observability.tar.gz /tmp/deploy.sha
             exit 1
           }
           trap rollback ERR
@@ -169,9 +170,18 @@ jobs:
           cp -a "$INCOMING_PATH"/. "$RELEASE_PATH"/
           if [ -f "$RELEASE_PATH/deploy/reset-observability-logs.sh" ]; then
             chmod 755 "$RELEASE_PATH/deploy/reset-observability-logs.sh"
+          else
+            echo "[deploy] ERROR: expected reset script missing at $RELEASE_PATH/deploy/reset-observability-logs.sh"
+            exit 1
+          fi
+
+          if [ -f /tmp/deploy.sha ]; then
+            cp /tmp/deploy.sha "$RELEASE_PATH/.deployed_sha"
+            chmod 644 "$RELEASE_PATH/.deployed_sha"
+            echo "[deploy] deployed sha: $(cat "$RELEASE_PATH/.deployed_sha")"
           fi
           rm -rf "$INCOMING_PATH"
-          rm -f /tmp/observability.tar.gz
+          rm -f /tmp/observability.tar.gz /tmp/deploy.sha
 
           cd "$RELEASE_PATH"
           echo "[deploy] docker compose down"
@@ -190,13 +200,13 @@ jobs:
 
           SCP_ERR_FILE=$(mktemp)
           if ! timeout 180s scp -P "$OBS_PORT" $SSH_OPTS \
-            observability.tar.gz deploy-remote.sh \
+            observability.tar.gz deploy-remote.sh deploy.sha \
             "$OBSERVABILITY_USER@$OBSERVABILITY_HOST:/tmp/" 2>"$SCP_ERR_FILE"; then
             if grep -qi "Network is unreachable" "$SCP_ERR_FILE"; then
               echo "[deploy] Network unreachable with default address family; retrying upload with IPv4"
               SSH_AF_OPT="-4"
               timeout 180s scp $SSH_AF_OPT -P "$OBS_PORT" $SSH_OPTS \
-                observability.tar.gz deploy-remote.sh \
+                observability.tar.gz deploy-remote.sh deploy.sha \
                 "$OBSERVABILITY_USER@$OBSERVABILITY_HOST:/tmp/"
             else
               cat "$SCP_ERR_FILE"
@@ -225,4 +235,4 @@ jobs:
           rm -f "$SSH_ERR_FILE"
 
           ssh $SSH_AF_OPT -p "$OBS_PORT" $SSH_OPTS -O exit "$OBSERVABILITY_USER@$OBSERVABILITY_HOST" >/dev/null 2>&1 || true
-          rm -f deploy-remote.sh
+          rm -f deploy-remote.sh deploy.sha
