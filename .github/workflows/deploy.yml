@@ -38,25 +38,29 @@ jobs:
         run: |
           git ls-files -z | grep -zv '^.github/' | tar --null -T - -czf observability.tar.gz
 
-      - name: Copy bundle to host
-        uses: appleboy/scp-action@v1
-        with:
-          host: ${{ secrets.OBSERVABILITY_HOST }}
-          username: ${{ secrets.OBSERVABILITY_USER }}
-          key: ${{ secrets.OBSERVABILITY_SSH_KEY }}
-          port: ${{ secrets.OBSERVABILITY_PORT || '22' }}
-          source: observability.tar.gz
-          target: /tmp
+      - name: Deploy stack over SSH
+        env:
+          OBSERVABILITY_HOST: ${{ secrets.OBSERVABILITY_HOST }}
+          OBSERVABILITY_USER: ${{ secrets.OBSERVABILITY_USER }}
+          OBSERVABILITY_SSH_KEY: ${{ secrets.OBSERVABILITY_SSH_KEY }}
+          OBSERVABILITY_PORT: ${{ secrets.OBSERVABILITY_PORT }}
+        run: |
+          set -eu
 
-      - name: Deploy stack on host
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.OBSERVABILITY_HOST }}
-          username: ${{ secrets.OBSERVABILITY_USER }}
-          key: ${{ secrets.OBSERVABILITY_SSH_KEY }}
-          port: ${{ secrets.OBSERVABILITY_PORT || '22' }}
-          command_timeout: 45m
-          script: |
+          OBS_PORT="${OBSERVABILITY_PORT:-22}"
+
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s' "$OBSERVABILITY_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p "$OBS_PORT" "$OBSERVABILITY_HOST" >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+          scp -P "$OBS_PORT" -i ~/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTimeout=30 \
+            observability.tar.gz "$OBSERVABILITY_USER@$OBSERVABILITY_HOST:/tmp/observability.tar.gz"
+
+          timeout 45m ssh -p "$OBS_PORT" -i ~/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTimeout=30 \
+            "$OBSERVABILITY_USER@$OBSERVABILITY_HOST" 'bash -se' << 'EOF'
             set -eu
 
             TARGET_PATH="${{ secrets.OBSERVABILITY_TARGET_PATH }}"
@@ -92,13 +96,13 @@ jobs:
 
             tar -xzf /tmp/observability.tar.gz -C "$INCOMING_PATH"
 
-            cat > "$INCOMING_PATH/.env" << 'EOF'
+            cat > "$INCOMING_PATH/.env" << 'ENVFILE'
             GRAFANA_ADMIN_USER=${{ secrets.GRAFANA_ADMIN_USER }}
             GRAFANA_ADMIN_PASSWORD=${{ secrets.GRAFANA_ADMIN_PASSWORD }}
             HALO_LOG_PATH=${{ secrets.HALO_LOG_PATH }}
             PANDA_LOG_PATH=${{ secrets.PANDA_LOG_PATH }}
             KUMA_METRICS_API_KEY=${{ secrets.KUMA_METRICS_API_KEY }}
-            EOF
+            ENVFILE
 
             find "$RELEASE_PATH" -mindepth 1 -maxdepth 1 -exec rm -rf {} \;
             cp -a "$INCOMING_PATH"/. "$RELEASE_PATH"/
@@ -112,3 +116,4 @@ jobs:
             docker compose ps
             trap - ERR
             docker image prune -f
+          EOF
