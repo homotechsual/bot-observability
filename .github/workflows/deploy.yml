@@ -160,6 +160,10 @@ jobs:
           KUMA_METRICS_API_KEY=${{ secrets.KUMA_METRICS_API_KEY }}
           ENVFILE
 
+          mkdir -p "$INCOMING_PATH/secrets"
+          printf '%s' "${{ secrets.KUMA_METRICS_API_KEY }}" > "$INCOMING_PATH/secrets/kuma_metrics_api_key"
+          chmod 600 "$INCOMING_PATH/secrets/kuma_metrics_api_key"
+
           find "$RELEASE_PATH" -mindepth 1 -maxdepth 1 -exec rm -rf {} \;
           cp -a "$INCOMING_PATH"/. "$RELEASE_PATH"/
           rm -rf "$INCOMING_PATH"

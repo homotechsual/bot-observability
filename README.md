@@ -16,6 +16,12 @@ Shared observability stack for both bots without SSHing into servers.
 2. Set `GRAFANA_ADMIN_USER` and `GRAFANA_ADMIN_PASSWORD`.
 3. Set `HALO_LOG_PATH` and `PANDA_LOG_PATH` to absolute log directories on your host.
 4. If Uptime Kuma metrics auth is enabled, set `KUMA_METRICS_API_KEY`.
+5. Create Prometheus auth file from that key:
+
+```powershell
+New-Item -ItemType Directory -Force -Path .\secrets | Out-Null
+Set-Content -Path .\secrets\kuma_metrics_api_key -Value $env:KUMA_METRICS_API_KEY -NoNewline
+```
 
 ## 2. Start Stack
 
