@@ -57,9 +57,25 @@ jobs:
 
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          # Normalize potential CRLF line endings in multi-line private key secrets.
-          printf '%s' "$OBSERVABILITY_SSH_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
+          # Accept raw PEM/OpenSSH keys, escaped \n secrets, or base64-encoded key payloads.
+          if printf '%s' "$OBSERVABILITY_SSH_KEY" | grep -q "BEGIN .* PRIVATE KEY"; then
+            if printf '%s' "$OBSERVABILITY_SSH_KEY" | grep -q '\\n'; then
+              printf '%s' "$OBSERVABILITY_SSH_KEY" | perl -pe 's/\r//g; s/\\n/\n/g' > ~/.ssh/id_ed25519
+            else
+              printf '%s' "$OBSERVABILITY_SSH_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
+            fi
+          else
+            printf '%s' "$OBSERVABILITY_SSH_KEY" | tr -d '\r' | base64 -d > ~/.ssh/id_ed25519
+          fi
           chmod 600 ~/.ssh/id_ed25519
+          if ! ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null 2>&1; then
+            echo "[deploy] ERROR: OBSERVABILITY_SSH_KEY is not a valid private key after normalization."
+            echo "[deploy] Store it as either:"
+            echo "[deploy] 1) a raw multi-line OpenSSH/PEM key,"
+            echo "[deploy] 2) the same key with escaped \\n sequences, or"
+            echo "[deploy] 3) a base64-encoded private key."
+            exit 1
+          fi
           touch ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
           mkdir -p ~/.ssh/controlmasters
