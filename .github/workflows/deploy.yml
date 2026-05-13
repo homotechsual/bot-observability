@@ -57,25 +57,40 @@ jobs:
 
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          # Accept raw PEM/OpenSSH keys, escaped \n secrets, or base64-encoded key payloads.
-          if printf '%s' "$OBSERVABILITY_SSH_KEY" | grep -q "BEGIN .* PRIVATE KEY"; then
-            if printf '%s' "$OBSERVABILITY_SSH_KEY" | grep -q '\\n'; then
-              printf '%s' "$OBSERVABILITY_SSH_KEY" | perl -pe 's/\r//g; s/\\n/\n/g' > ~/.ssh/id_ed25519
-            else
-              printf '%s' "$OBSERVABILITY_SSH_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
-            fi
+          # Accept raw PEM/OpenSSH keys, escaped \n secrets, quoted secrets, or base64-encoded key payloads.
+          KEY_SECRET_TRIMMED=$(printf '%s' "$OBSERVABILITY_SSH_KEY" | perl -pe 's/^\s+//; s/\s+$//')
+          case "$KEY_SECRET_TRIMMED" in
+            \"*\") KEY_SECRET_TRIMMED=${KEY_SECRET_TRIMMED#\"}; KEY_SECRET_TRIMMED=${KEY_SECRET_TRIMMED%\"} ;;
+            \'*\') KEY_SECRET_TRIMMED=${KEY_SECRET_TRIMMED#\'}; KEY_SECRET_TRIMMED=${KEY_SECRET_TRIMMED%\'} ;;
+          esac
+          KEY_SECRET_NORMALIZED=$(printf '%s' "$KEY_SECRET_TRIMMED" | perl -pe 's/\\r\\n/\n/g; s/\\n/\n/g; s/\r//g')
+
+          if printf '%s' "$KEY_SECRET_NORMALIZED" | grep -q "BEGIN .* PRIVATE KEY"; then
+            printf '%s' "$KEY_SECRET_NORMALIZED" > ~/.ssh/id_ed25519
+          elif printf '%s' "$KEY_SECRET_TRIMMED" | tr -d '\r\n\t ' | base64 -d > ~/.ssh/id_ed25519 2>/dev/null; then
+            :
+          elif printf '%s' "$KEY_SECRET_TRIMMED" | tr -d '\r\n\t ' | tr '_-' '/+' | base64 -d > ~/.ssh/id_ed25519 2>/dev/null; then
+            :
           else
-            printf '%s' "$OBSERVABILITY_SSH_KEY" | tr -d '\r' | base64 -d > ~/.ssh/id_ed25519
+            echo "[deploy] ERROR: OBSERVABILITY_SSH_KEY is neither a private key block nor valid base64."
+            echo "[deploy] Save a raw private key (preferred) or a valid base64-encoded key without extra text."
+            exit 1
           fi
           chmod 600 ~/.ssh/id_ed25519
-          if ! ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null 2>&1; then
+          KEY_CHECK_ERR=$(mktemp)
+          if ! ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null 2>"$KEY_CHECK_ERR"; then
             echo "[deploy] ERROR: OBSERVABILITY_SSH_KEY is not a valid private key after normalization."
+            if grep -qi "passphrase" "$KEY_CHECK_ERR"; then
+              echo "[deploy] The provided key appears to be passphrase-protected; CI requires an unencrypted deploy key."
+            fi
             echo "[deploy] Store it as either:"
             echo "[deploy] 1) a raw multi-line OpenSSH/PEM key,"
             echo "[deploy] 2) the same key with escaped \\n sequences, or"
             echo "[deploy] 3) a base64-encoded private key."
+            rm -f "$KEY_CHECK_ERR"
             exit 1
           fi
+          rm -f "$KEY_CHECK_ERR"
           touch ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
           mkdir -p ~/.ssh/controlmasters
