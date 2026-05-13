@@ -63,16 +63,16 @@ jobs:
           touch ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
-          SSH_OPTS="-i ~/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=~/.ssh/known_hosts"
+          SSH_OPTS="-i ~/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=~/.ssh/known_hosts -o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o PubkeyAuthentication=yes -o NumberOfPasswordPrompts=0"
 
           echo "[deploy] Checking SSH connectivity to $OBSERVABILITY_HOST:$OBS_PORT"
           CONNECTED=0
-          for attempt in 1 2 3; do
+          for attempt in 1 2; do
             if timeout 45s ssh -p "$OBS_PORT" $SSH_OPTS "$OBSERVABILITY_USER@$OBSERVABILITY_HOST" "echo ok" >/dev/null 2>&1; then
               CONNECTED=1
               break
             fi
-            echo "[deploy] SSH connectivity check failed (attempt $attempt/3); retrying..."
+            echo "[deploy] SSH connectivity check failed (attempt $attempt/2); retrying..."
             sleep 5
           done
 
