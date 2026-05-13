@@ -65,27 +65,7 @@ jobs:
 
           SSH_OPTS="-i ~/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=~/.ssh/known_hosts -o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o PubkeyAuthentication=yes -o NumberOfPasswordPrompts=0"
 
-          echo "[deploy] Checking SSH connectivity to $OBSERVABILITY_HOST:$OBS_PORT"
-          CONNECTED=0
-          for attempt in 1 2; do
-            if timeout 45s ssh -p "$OBS_PORT" $SSH_OPTS "$OBSERVABILITY_USER@$OBSERVABILITY_HOST" "echo ok" >/dev/null 2>&1; then
-              CONNECTED=1
-              break
-            fi
-            echo "[deploy] SSH connectivity check failed (attempt $attempt/2); retrying..."
-            sleep 5
-          done
-
-          if [ "$CONNECTED" -ne 1 ]; then
-            echo "[deploy] ERROR: Cannot reach SSH on $OBSERVABILITY_HOST:$OBS_PORT from GitHub runner."
-            echo "[deploy] Check OBSERVABILITY_PORT secret, server firewall/security group, and SSH daemon availability."
-            exit 1
-          fi
-
-          echo "[deploy] Uploading bundle"
-
-          timeout 120s scp -P "$OBS_PORT" $SSH_OPTS \
-            observability.tar.gz "$OBSERVABILITY_USER@$OBSERVABILITY_HOST:/tmp/observability.tar.gz"
+          echo "[deploy] Skipping standalone SSH probe to reduce fail2ban risk"
 
           cat > deploy-remote.sh << 'REMOTE_SCRIPT'
           set -eu
@@ -149,10 +129,11 @@ jobs:
           docker image prune -f
           REMOTE_SCRIPT
 
-          echo "[deploy] Uploading remote deploy script"
+          echo "[deploy] Uploading deployment artifacts"
 
-          timeout 120s scp -P "$OBS_PORT" $SSH_OPTS \
-            deploy-remote.sh "$OBSERVABILITY_USER@$OBSERVABILITY_HOST:/tmp/deploy-remote.sh"
+          timeout 180s scp -P "$OBS_PORT" $SSH_OPTS \
+            observability.tar.gz deploy-remote.sh \
+            "$OBSERVABILITY_USER@$OBSERVABILITY_HOST:/tmp/"
 
           echo "[deploy] Executing remote deploy script"
 
