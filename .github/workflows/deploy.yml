@@ -290,6 +290,11 @@ jobs:
           docker volume create bot-observability-loki-data
           docker volume create bot-observability-kuma-data
           docker volume create bot-observability-prometheus-data
+          echo "[deploy] Normalizing Grafana data volume permissions (uid 472)"
+          docker run --rm \
+            -v bot-observability-grafana-data:/var/lib/grafana \
+            alpine:3.20 \
+            sh -c 'chown -R 472:472 /var/lib/grafana'
           echo "[deploy] docker compose pull"
           docker compose pull
           echo "[deploy] docker compose up"
