@@ -67,7 +67,10 @@ services:
 
 volumes:
   grafana-data:
+    name: bot-observability-grafana-data
   loki-data:
+    name: bot-observability-loki-data
   kuma-data:
     name: bot-observability-kuma-data
   prometheus-data:
+    name: bot-observability-prometheus-data

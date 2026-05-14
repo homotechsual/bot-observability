@@ -111,7 +111,10 @@ jobs:
           TIMESTAMP=$(date +%Y%m%d%H%M%S)
           INCOMING_PATH="$TARGET_PATH/incoming-$TIMESTAMP"
           BACKUP_FILE="$BACKUP_PATH/release-$TIMESTAMP.tar.gz"
+          GRAFANA_VOLUME_NAME="bot-observability-grafana-data"
+          LOKI_VOLUME_NAME="bot-observability-loki-data"
           KUMA_VOLUME_NAME="bot-observability-kuma-data"
+          PROMETHEUS_VOLUME_NAME="bot-observability-prometheus-data"
           KUMA_BACKUP_FILE="$BACKUP_PATH/kuma-data-$TIMESTAMP.tar.gz"
           RELEASE_BACKUP_RETENTION=5
           KUMA_BACKUP_RETENTION=5
@@ -119,6 +122,63 @@ jobs:
           mkdir -p "$RELEASE_PATH"
           mkdir -p "$BACKUP_PATH"
           mkdir -p "$INCOMING_PATH"
+
+          is_volume_empty() {
+            volume_name="$1"
+            if ! docker volume inspect "$volume_name" >/dev/null 2>&1; then
+              return 0
+            fi
+
+            if docker run --rm -v "$volume_name:/data" busybox:1.36 sh -c '[ -z "$(ls -A /data 2>/dev/null)" ]'; then
+              return 0
+            fi
+
+            return 1
+          }
+
+          migrate_legacy_bind_to_volume() {
+            volume_name="$1"
+            service_name="$2"
+            shift 2
+
+            if ! is_volume_empty "$volume_name"; then
+              echo "[deploy] $service_name volume already contains data; skipping migration"
+              return
+            fi
+
+            for legacy_path in "$@"; do
+              if [ -d "$legacy_path" ] && [ -n "$(ls -A "$legacy_path" 2>/dev/null || true)" ]; then
+                echo "[deploy] Migrating legacy $service_name data from $legacy_path to volume $volume_name"
+                docker run --rm \
+                  -v "$volume_name:/target" \
+                  -v "$legacy_path:/legacy:ro" \
+                  alpine:3.20 \
+                  sh -c 'cp -a /legacy/. /target/'
+                echo "[deploy] Migration complete for $service_name"
+                return
+              fi
+            done
+
+            echo "[deploy] No legacy $service_name data source found; skipping migration"
+          }
+
+          # One-time migration safety net when moving from bind mounts to named volumes.
+          migrate_legacy_bind_to_volume "$GRAFANA_VOLUME_NAME" "Grafana" \
+            "$RELEASE_PATH/grafana-data" \
+            "$RELEASE_PATH/grafana" \
+            "$TARGET_PATH/grafana-data" \
+            "$TARGET_PATH/grafana"
+          migrate_legacy_bind_to_volume "$LOKI_VOLUME_NAME" "Loki" \
+            "$RELEASE_PATH/loki-data" \
+            "$TARGET_PATH/loki-data"
+          migrate_legacy_bind_to_volume "$KUMA_VOLUME_NAME" "Uptime Kuma" \
+            "$RELEASE_PATH/kuma-data" \
+            "$RELEASE_PATH/uptime-kuma" \
+            "$TARGET_PATH/kuma-data" \
+            "$TARGET_PATH/uptime-kuma"
+          migrate_legacy_bind_to_volume "$PROMETHEUS_VOLUME_NAME" "Prometheus" \
+            "$RELEASE_PATH/prometheus-data" \
+            "$TARGET_PATH/prometheus-data"
 
           HAS_BACKUP=0
           if [ -n "$(ls -A "$RELEASE_PATH" 2>/dev/null || true)" ]; then
@@ -225,8 +285,6 @@ jobs:
           rm -f /tmp/observability.tar.gz /tmp/deploy.sha
 
           cd "$RELEASE_PATH"
-          echo "[deploy] docker compose down"
-          docker compose down
           echo "[deploy] docker compose pull"
           docker compose pull
           echo "[deploy] docker compose up"
