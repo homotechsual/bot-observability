@@ -269,6 +269,20 @@ jobs:
 
           find "$RELEASE_PATH" -mindepth 1 -maxdepth 1 -exec rm -rf {} \;
           cp -a "$INCOMING_PATH"/. "$RELEASE_PATH"/
+
+          if [ ! -d "$RELEASE_PATH/grafana/provisioning/dashboards/json" ]; then
+            echo "[deploy] ERROR: Grafana dashboard directory missing at $RELEASE_PATH/grafana/provisioning/dashboards/json"
+            exit 1
+          fi
+
+          dashboard_count=$(find "$RELEASE_PATH/grafana/provisioning/dashboards/json" -maxdepth 1 -name '*.json' | wc -l | tr -d ' ')
+          if [ "$dashboard_count" = "0" ]; then
+            echo "[deploy] ERROR: No dashboard JSON files found in $RELEASE_PATH/grafana/provisioning/dashboards/json"
+            exit 1
+          fi
+
+          echo "[deploy] Found $dashboard_count dashboard JSON file(s)"
+
           if [ -f "$RELEASE_PATH/deploy/reset-observability-logs.sh" ]; then
             chmod 755 "$RELEASE_PATH/deploy/reset-observability-logs.sh"
           else
