@@ -770,18 +770,18 @@
         "type": "custom"
       },
       {
-        "current": { "selected": true, "text": "Warnings + Errors", "value": "\\[(WRN|ERR)\\]" },
+        "current": { "selected": true, "text": "Warnings + Errors", "value": "WRN|ERR" },
         "hide": 0,
         "includeAll": false,
         "label": "Severity",
         "multi": false,
         "name": "log_severity",
         "options": [
-          { "selected": true, "text": "Warnings + Errors", "value": "\\[(WRN|ERR)\\]" },
-          { "selected": false, "text": "Warnings Only", "value": "\\[WRN\\]" },
-          { "selected": false, "text": "Errors Only", "value": "\\[ERR\\]" }
+          { "selected": true, "text": "Warnings + Errors", "value": "WRN|ERR" },
+          { "selected": false, "text": "Warnings Only", "value": "WRN" },
+          { "selected": false, "text": "Errors Only", "value": "ERR" }
         ],
-        "query": "Warnings + Errors : \\[(WRN|ERR)\\], Warnings Only : \\[WRN\\], Errors Only : \\[ERR\\]",
+        "query": "Warnings + Errors : WRN|ERR, Warnings Only : WRN, Errors Only : ERR",
         "skipUrlSync": false,
         "type": "custom"
       },
@@ -794,10 +794,10 @@
         "name": "log_signal",
         "options": [
           { "selected": true, "text": "All Signals", "value": ".*" },
-          { "selected": false, "text": "Connection Lifecycle", "value": "\\[DiscordLifecycle\\]" },
+          { "selected": false, "text": "Connection Lifecycle", "value": "DiscordLifecycle" },
           { "selected": false, "text": "Gateway Noise", "value": "Gateway" }
         ],
-        "query": "All Signals : .* , Connection Lifecycle : \\[DiscordLifecycle\\], Gateway Noise : Gateway",
+        "query": "All Signals : .*, Connection Lifecycle : DiscordLifecycle, Gateway Noise : Gateway",
         "skipUrlSync": false,
         "type": "custom"
       }
