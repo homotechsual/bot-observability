@@ -556,7 +556,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{service=~\"halo-bot|panda-bot\"} |= \"[ERR]\"",
+          "expr": "{service=~\"$log_bot\"} |= \"[ERR]\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -581,7 +581,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{service=~\"halo-bot|panda-bot\"} |~ \"\\\\[(WRN|ERR)\\\\]\"",
+          "expr": "{service=~\"$log_bot\"} |~ \"$log_level\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -721,7 +721,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{service=~\"halo-bot|panda-bot\"}",
+          "expr": "{service=~\"$log_bot\"} |~ \"$log_level\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -734,12 +734,48 @@
   "schemaVersion": 39,
   "style": "dark",
   "tags": ["bots", "observability"],
-  "templating": { "list": [] },
+  "templating": {
+    "list": [
+      {
+        "current": { "selected": true, "text": "All Bots", "value": ".*" },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Bot",
+        "multi": false,
+        "name": "log_bot",
+        "options": [
+          { "selected": true, "text": "All Bots", "value": ".*" },
+          { "selected": false, "text": "HaloCommunityBot", "value": "halo-bot" },
+          { "selected": false, "text": "PandaBot", "value": "panda-bot" }
+        ],
+        "query": "All Bots : .* , HaloCommunityBot : halo-bot, PandaBot : panda-bot",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": { "selected": true, "text": "All Log Lines", "value": ".*" },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Level",
+        "multi": false,
+        "name": "log_level",
+        "options": [
+          { "selected": true, "text": "All Log Lines", "value": ".*" },
+          { "selected": false, "text": "Warnings", "value": "\\[WRN\\]" },
+          { "selected": false, "text": "Errors", "value": "\\[ERR\\]" },
+          { "selected": false, "text": "Warnings + Errors", "value": "\\[(WRN|ERR)\\]" }
+        ],
+        "query": "All Log Lines : .* , Warnings : \\[WRN\\], Errors : \\[ERR\\], Warnings + Errors : \\[(WRN|ERR)\\]",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
   "time": { "from": "now-24h", "to": "now" },
   "timepicker": {},
   "timezone": "",
   "title": "Bot Ops Overview",
   "uid": "bot-ops-overview",
-  "version": 6,
+  "version": 7,
   "weekStart": ""
 }
