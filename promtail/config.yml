@@ -10,6 +10,34 @@ clients:
 
 scrape_configs:
   - job_name: halo-bot
+    pipeline_stages:
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2} [^\[]+) \[(?P<level>[A-Z]{3})\] (?P<source_context>[^ ]+) (?P<message>.*)$'
+      - labels:
+          level:
+          source_context:
+      - static_labels:
+          component: other
+      - match:
+          selector: '{source_context=~"(?i).*youtube.*"}'
+          stages:
+            - static_labels:
+                component: youtube
+      - match:
+          selector: '{source_context=~"(?i).*halostatus.*"}'
+          stages:
+            - static_labels:
+                component: halo_status
+      - match:
+          selector: '{source_context=~"(?i).*heartbeat.*"}'
+          stages:
+            - static_labels:
+                component: heartbeat
+      - match:
+          selector: '{source_context=~"(?i).*(discordbotservice|gateway).*"}'
+          stages:
+            - static_labels:
+                component: discord
     static_configs:
       - targets: [localhost]
         labels:
@@ -18,6 +46,44 @@ scrape_configs:
           __path__: /logs/halo/*.log
 
   - job_name: panda-bot
+    pipeline_stages:
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2} [^\[]+) \[(?P<level>[A-Z]{3})\] (?P<source_context>[^ ]+) (?P<message>.*)$'
+      - labels:
+          level:
+          source_context:
+      - static_labels:
+          component: other
+      - match:
+          selector: '{source_context=~"(?i).*starcitizen.*"}'
+          stages:
+            - static_labels:
+                component: star_citizen
+      - match:
+          selector: '{source_context=~"(?i).*pathofexile.*"}'
+          stages:
+            - static_labels:
+                component: path_of_exile
+      - match:
+          selector: '{source_context=~"(?i).*(returnofreckoning|rormodule).*"}'
+          stages:
+            - static_labels:
+                component: return_of_reckoning
+      - match:
+          selector: '{source_context=~"(?i).*(ashesofcreation|ashesforge).*"}'
+          stages:
+            - static_labels:
+                component: ashes_of_creation
+      - match:
+          selector: '{source_context=~"(?i).*(discordbotservice|interactionhandler|gateway).*"}'
+          stages:
+            - static_labels:
+                component: discord
+      - match:
+          selector: '{source_context=~"(?i).*heartbeat.*"}'
+          stages:
+            - static_labels:
+                component: heartbeat
     static_configs:
       - targets: [localhost]
         labels:
