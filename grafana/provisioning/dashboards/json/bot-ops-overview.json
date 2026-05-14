@@ -581,7 +581,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{service=~\"$log_bot\"} |~ \"$log_level\" |~ \"$log_signal\"",
+          "expr": "{service=~\"$log_bot\"} |~ \"$log_severity\" |~ \"$log_signal\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -737,18 +737,18 @@
   "templating": {
     "list": [
       {
-        "current": { "selected": true, "text": "All Bots", "value": ".+" },
+        "current": { "selected": true, "text": "All Bots", "value": "halo-bot|panda-bot" },
         "hide": 0,
         "includeAll": false,
         "label": "Bot",
         "multi": false,
         "name": "log_bot",
         "options": [
-          { "selected": true, "text": "All Bots", "value": ".+" },
+          { "selected": true, "text": "All Bots", "value": "halo-bot|panda-bot" },
           { "selected": false, "text": "HaloCommunityBot", "value": "halo-bot" },
           { "selected": false, "text": "PandaBot", "value": "panda-bot" }
         ],
-        "query": "All Bots : .+ , HaloCommunityBot : halo-bot, PandaBot : panda-bot",
+        "query": "All Bots : halo-bot|panda-bot, HaloCommunityBot : halo-bot, PandaBot : panda-bot",
         "skipUrlSync": false,
         "type": "custom"
       },
@@ -766,6 +766,22 @@
           { "selected": false, "text": "Warnings + Errors", "value": "\\[(WRN|ERR)\\]" }
         ],
         "query": "All Log Lines : .* , Warnings : \\[WRN\\], Errors : \\[ERR\\], Warnings + Errors : \\[(WRN|ERR)\\]",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": { "selected": true, "text": "Warnings + Errors", "value": "\\[(WRN|ERR)\\]" },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Severity",
+        "multi": false,
+        "name": "log_severity",
+        "options": [
+          { "selected": true, "text": "Warnings + Errors", "value": "\\[(WRN|ERR)\\]" },
+          { "selected": false, "text": "Warnings Only", "value": "\\[WRN\\]" },
+          { "selected": false, "text": "Errors Only", "value": "\\[ERR\\]" }
+        ],
+        "query": "Warnings + Errors : \\[(WRN|ERR)\\], Warnings Only : \\[WRN\\], Errors Only : \\[ERR\\]",
         "skipUrlSync": false,
         "type": "custom"
       },
