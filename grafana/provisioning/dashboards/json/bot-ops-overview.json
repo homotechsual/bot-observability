@@ -829,8 +829,8 @@
   "time": { "from": "now-24h", "to": "now" },
   "timepicker": {},
   "timezone": "",
-  "title": "Bot Ops Overview (Components)",
+  "title": "Bot Ops Overview (Component Filter Enabled)",
   "uid": "bot-ops-overview-components",
-  "version": 100,
+  "version": 1000001,
   "weekStart": ""
 }
