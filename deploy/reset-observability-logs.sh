@@ -45,7 +45,8 @@ truncate_logs() {
 }
 
 find_loki_volumes() {
-  docker volume ls --format '{{.Name}}' | grep -E '(^|_)loki-data$' || true
+  # Support both legacy underscore and current hyphenated volume names.
+  docker volume ls --format '{{.Name}}' | grep -E '(^|[_-])loki-data$' || true
 }
 
 echo "[reset] Stopping observability stack"
@@ -59,7 +60,7 @@ echo "[reset] Removing Loki data volume(s)"
 mapfile -t loki_volumes < <(find_loki_volumes)
 
 if [[ ${#loki_volumes[@]} -eq 0 ]]; then
-  echo "[reset] No Loki volume matching *_loki-data found"
+  echo "[reset] No Loki volume matching *loki-data found"
 else
   for vol in "${loki_volumes[@]}"; do
     echo "[reset] Removing volume: ${vol}"
