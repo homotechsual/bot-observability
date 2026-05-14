@@ -285,6 +285,11 @@ jobs:
           rm -f /tmp/observability.tar.gz /tmp/deploy.sha
 
           cd "$RELEASE_PATH"
+          echo "[deploy] Ensuring named volumes exist"
+          docker volume create bot-observability-grafana-data
+          docker volume create bot-observability-loki-data
+          docker volume create bot-observability-kuma-data
+          docker volume create bot-observability-prometheus-data
           echo "[deploy] docker compose pull"
           docker compose pull
           echo "[deploy] docker compose up"

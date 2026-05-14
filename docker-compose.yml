@@ -67,10 +67,14 @@ services:
 
 volumes:
   grafana-data:
+    external: true
     name: bot-observability-grafana-data
   loki-data:
+    external: true
     name: bot-observability-loki-data
   kuma-data:
+    external: true
     name: bot-observability-kuma-data
   prometheus-data:
+    external: true
     name: bot-observability-prometheus-data
