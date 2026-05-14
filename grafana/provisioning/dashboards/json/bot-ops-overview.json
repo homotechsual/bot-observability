@@ -696,6 +696,38 @@
       ],
       "title": "Kuma Scrape Health Over Time",
       "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 49 },
+      "id": 25,
+      "title": "Global Log Triage",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 50 },
+      "id": 15,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": true,
+        "showLabels": true,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "{service=~\"halo-bot|panda-bot\"}",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "All Bot Logs (Raw Stream)",
+      "type": "logs"
     }
   ],
   "refresh": "30s",
@@ -708,6 +740,6 @@
   "timezone": "",
   "title": "Bot Ops Overview",
   "uid": "bot-ops-overview",
-  "version": 5,
+  "version": 6,
   "weekStart": ""
 }
