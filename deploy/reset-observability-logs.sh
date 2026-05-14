@@ -26,6 +26,28 @@ if [[ -f .env ]]; then
   set +a
 fi
 
+ensure_kuma_metrics_secret() {
+  local secret_file="${REPO_ROOT}/secrets/kuma_metrics_api_key"
+
+  mkdir -p "${REPO_ROOT}/secrets"
+
+  if [[ -n "${KUMA_METRICS_API_KEY:-}" ]]; then
+    printf '%s' "${KUMA_METRICS_API_KEY}" > "${secret_file}"
+    chmod 644 "${secret_file}"
+    echo "[reset] Wrote Kuma metrics auth secret from KUMA_METRICS_API_KEY"
+  fi
+
+  if [[ ! -f "${secret_file}" ]]; then
+    echo "[reset] ERROR: Missing ${secret_file}. Set KUMA_METRICS_API_KEY in .env or create secrets/kuma_metrics_api_key." >&2
+    exit 1
+  fi
+
+  if [[ ! -s "${secret_file}" ]]; then
+    echo "[reset] ERROR: ${secret_file} is empty. Populate it with the Kuma metrics password." >&2
+    exit 1
+  fi
+}
+
 truncate_logs() {
   local path="$1"
   local label="$2"
@@ -97,11 +119,15 @@ else
 fi
 
 echo "[reset] Starting observability stack"
+ensure_kuma_metrics_secret
 ensure_external_volume "bot-observability-grafana-data"
 ensure_external_volume "bot-observability-loki-data"
 ensure_external_volume "bot-observability-kuma-data"
 ensure_external_volume "bot-observability-prometheus-data"
 docker compose up -d
+
+# Wait briefly for first scrape so dashboard stat cards repopulate after TSDB reset.
+sleep 5
 
 echo "[reset] Done"
 echo "[reset] Note: Uptime monitor definitions in Kuma are preserved; Prometheus metric history is reset."

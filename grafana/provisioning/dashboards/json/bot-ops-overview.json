@@ -74,7 +74,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "max((monitor_status{monitor_name=~\".*([Hh]alo|[Hh]alo[Cc]ommunity).*\"}) or (monitor_status{name=~\".*([Hh]alo|[Hh]alo[Cc]ommunity).*\"}) or (monitor_status{monitor=~\".*([Hh]alo|[Hh]alo[Cc]ommunity).*\"}) or (monitor_status{friendly_name=~\".*([Hh]alo|[Hh]alo[Cc]ommunity).*\"}))",
+          "expr": "max((monitor_status{monitor_name=~\".*([Hh]alo|[Hh]alo[Cc]ommunity).*\"}) or (monitor_status{name=~\".*([Hh]alo|[Hh]alo[Cc]ommunity).*\"}) or (monitor_status{monitor=~\".*([Hh]alo|[Hh]alo[Cc]ommunity).*\"}) or (monitor_status{friendly_name=~\".*([Hh]alo|[Hh]alo[Cc]ommunity).*\"})) or vector(0)",
           "instant": true,
           "refId": "A"
         }
@@ -131,7 +131,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "max((monitor_status{monitor_name=~\".*([Pp]anda|[Pp]andamonium).*\"}) or (monitor_status{name=~\".*([Pp]anda|[Pp]andamonium).*\"}) or (monitor_status{monitor=~\".*([Pp]anda|[Pp]andamonium).*\"}) or (monitor_status{friendly_name=~\".*([Pp]anda|[Pp]andamonium).*\"}))",
+          "expr": "max((monitor_status{monitor_name=~\".*([Pp]anda|[Pp]andamonium).*\"}) or (monitor_status{name=~\".*([Pp]anda|[Pp]andamonium).*\"}) or (monitor_status{monitor=~\".*([Pp]anda|[Pp]andamonium).*\"}) or (monitor_status{friendly_name=~\".*([Pp]anda|[Pp]andamonium).*\"})) or vector(0)",
           "instant": true,
           "refId": "A"
         }

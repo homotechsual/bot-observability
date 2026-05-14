@@ -165,4 +165,9 @@ What it preserves:
 * Grafana state volume
 * Uptime Kuma configuration/monitors volume
 
+Reset prerequisites:
+
+* Ensure `KUMA_METRICS_API_KEY` is set in `.env` or `./secrets/kuma_metrics_api_key` exists and is non-empty.
+* The reset script validates this before startup so Prometheus can scrape Kuma immediately after reset.
+
 # bot-observability
