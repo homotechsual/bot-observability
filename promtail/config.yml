@@ -19,22 +19,22 @@ scrape_configs:
       - static_labels:
           component: other
       - match:
-          selector: '{source_context=~"(?i).*youtube.*"}'
+          selector: '{source_context=~".*[Yy]outube.*"}'
           stages:
             - static_labels:
                 component: youtube
       - match:
-          selector: '{source_context=~"(?i).*halostatus.*"}'
+          selector: '{source_context=~".*[Hh]alo[Ss]tatus.*"}'
           stages:
             - static_labels:
                 component: halo_status
       - match:
-          selector: '{source_context=~"(?i).*heartbeat.*"}'
+          selector: '{source_context=~".*[Hh]eartbeat.*"}'
           stages:
             - static_labels:
                 component: heartbeat
       - match:
-          selector: '{source_context=~"(?i).*(discordbotservice|gateway).*"}'
+          selector: '{source_context=~".*([Dd]iscord[Bb]ot[Ss]ervice|[Gg]ateway).*"}'
           stages:
             - static_labels:
                 component: discord
@@ -55,32 +55,32 @@ scrape_configs:
       - static_labels:
           component: other
       - match:
-          selector: '{source_context=~"(?i).*starcitizen.*"}'
+          selector: '{source_context=~".*[Ss]tar[Cc]itizen.*"}'
           stages:
             - static_labels:
                 component: star_citizen
       - match:
-          selector: '{source_context=~"(?i).*pathofexile.*"}'
+          selector: '{source_context=~".*[Pp]ath[Oo]f[Ee]xile.*"}'
           stages:
             - static_labels:
                 component: path_of_exile
       - match:
-          selector: '{source_context=~"(?i).*(returnofreckoning|rormodule).*"}'
+          selector: '{source_context=~".*([Rr]eturn[Oo]f[Rr]eckoning|[Rr][Oo][Rr][Mm]odule).*"}'
           stages:
             - static_labels:
                 component: return_of_reckoning
       - match:
-          selector: '{source_context=~"(?i).*(ashesofcreation|ashesforge).*"}'
+          selector: '{source_context=~".*([Aa]shes[Oo]f[Cc]reation|[Aa]shes[Ff]orge).*"}'
           stages:
             - static_labels:
                 component: ashes_of_creation
       - match:
-          selector: '{source_context=~"(?i).*(discordbotservice|interactionhandler|gateway).*"}'
+          selector: '{source_context=~".*([Dd]iscord[Bb]ot[Ss]ervice|[Ii]nteraction[Hh]andler|[Gg]ateway).*"}'
           stages:
             - static_labels:
                 component: discord
       - match:
-          selector: '{source_context=~"(?i).*heartbeat.*"}'
+          selector: '{source_context=~".*[Hh]eartbeat.*"}'
           stages:
             - static_labels:
                 component: heartbeat

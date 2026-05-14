@@ -49,6 +49,11 @@ find_loki_volumes() {
   docker volume ls --format '{{.Name}}' | grep -E '(^|[_-])loki-data$' || true
 }
 
+find_prometheus_volumes() {
+  # Support both legacy underscore and current hyphenated volume names.
+  docker volume ls --format '{{.Name}}' | grep -E '(^|[_-])prometheus-data$' || true
+}
+
 ensure_external_volume() {
   local volume_name="$1"
 
@@ -79,6 +84,18 @@ else
   done
 fi
 
+echo "[reset] Removing Prometheus data volume(s) to clear uptime/stat history"
+mapfile -t prometheus_volumes < <(find_prometheus_volumes)
+
+if [[ ${#prometheus_volumes[@]} -eq 0 ]]; then
+  echo "[reset] No Prometheus volume matching *prometheus-data found"
+else
+  for vol in "${prometheus_volumes[@]}"; do
+    echo "[reset] Removing volume: ${vol}"
+    docker volume rm "${vol}"
+  done
+fi
+
 echo "[reset] Starting observability stack"
 ensure_external_volume "bot-observability-grafana-data"
 ensure_external_volume "bot-observability-loki-data"
@@ -87,6 +104,7 @@ ensure_external_volume "bot-observability-prometheus-data"
 docker compose up -d
 
 echo "[reset] Done"
+echo "[reset] Note: Uptime monitor definitions in Kuma are preserved; Prometheus metric history is reset."
 echo "[reset] Verify:"
 echo "  docker compose exec -T grafana wget -qO- http://loki:3100/ready"
 echo "  docker compose exec -T prometheus wget -qO- \"http://localhost:9090/api/v1/query?query=up%7Bjob%3D%5C%22uptime-kuma%5C%22%7D\""

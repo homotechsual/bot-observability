@@ -146,4 +146,23 @@ docker run --rm -v bot-observability-kuma-data:/target -v /opt/bot-observability
 docker compose up -d uptime-kuma
 ```
 
+## Reset Observability Data
+
+Use the reset helper to start from a clean baseline:
+
+```bash
+./deploy/reset-observability-logs.sh
+```
+
+What it clears:
+
+* Bot `*.log` files under `HALO_LOG_PATH` and `PANDA_LOG_PATH`
+* Loki data volume (`*loki-data`)
+* Prometheus data volume (`*prometheus-data`) - this clears Grafana history panels such as `Bot Uptime Status Over Time`
+
+What it preserves:
+
+* Grafana state volume
+* Uptime Kuma configuration/monitors volume
+
 # bot-observability
