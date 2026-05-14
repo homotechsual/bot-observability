@@ -49,6 +49,17 @@ find_loki_volumes() {
   docker volume ls --format '{{.Name}}' | grep -E '(^|[_-])loki-data$' || true
 }
 
+ensure_external_volume() {
+  local volume_name="$1"
+
+  if docker volume inspect "${volume_name}" >/dev/null 2>&1; then
+    echo "[reset] Volume exists: ${volume_name}"
+  else
+    echo "[reset] Creating missing volume: ${volume_name}"
+    docker volume create "${volume_name}" >/dev/null
+  fi
+}
+
 echo "[reset] Stopping observability stack"
 docker compose down
 
@@ -69,6 +80,10 @@ else
 fi
 
 echo "[reset] Starting observability stack"
+ensure_external_volume "bot-observability-grafana-data"
+ensure_external_volume "bot-observability-loki-data"
+ensure_external_volume "bot-observability-kuma-data"
+ensure_external_volume "bot-observability-prometheus-data"
 docker compose up -d
 
 echo "[reset] Done"
