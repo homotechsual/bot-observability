@@ -4,11 +4,11 @@ Shared observability stack for both bots without SSHing into servers.
 
 ## Included Services
 
-* Uptime Kuma (status dashboard): [http://127.0.0.1:3001](http://127.0.0.1:3001)
-* Grafana (log dashboard): [http://127.0.0.1:3000](http://127.0.0.1:3000)
+* Uptime Kuma (status dashboard): <http://127.0.0.1:3001>
+* Grafana (log dashboard): <http://127.0.0.1:3000>
 * Loki (log storage)
 * Promtail (log shipping from bot log folders)
-* Prometheus (metrics for Grafana): [http://127.0.0.1:9090](http://127.0.0.1:9090)
+* Prometheus (metrics for Grafana): <http://127.0.0.1:9090>
 
 ## 1. Configure Environment
 
