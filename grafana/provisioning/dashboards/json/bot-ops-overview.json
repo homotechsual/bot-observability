@@ -556,7 +556,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{service=~\"$log_bot\"} |= \"[ERR]\"",
+          "expr": "{service=~\"$log_bot\"} |= \"[ERR]\" |~ \"$log_signal\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -581,7 +581,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{service=~\"$log_bot\"} |~ \"$log_level\"",
+          "expr": "{service=~\"$log_bot\"} |~ \"$log_level\" |~ \"$log_signal\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -721,7 +721,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{service=~\"$log_bot\"} |~ \"$log_level\"",
+          "expr": "{service=~\"$log_bot\"} |~ \"$log_level\" |~ \"$log_signal\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -737,18 +737,18 @@
   "templating": {
     "list": [
       {
-        "current": { "selected": true, "text": "All Bots", "value": ".*" },
+        "current": { "selected": true, "text": "All Bots", "value": ".+" },
         "hide": 0,
         "includeAll": false,
         "label": "Bot",
         "multi": false,
         "name": "log_bot",
         "options": [
-          { "selected": true, "text": "All Bots", "value": ".*" },
+          { "selected": true, "text": "All Bots", "value": ".+" },
           { "selected": false, "text": "HaloCommunityBot", "value": "halo-bot" },
           { "selected": false, "text": "PandaBot", "value": "panda-bot" }
         ],
-        "query": "All Bots : .* , HaloCommunityBot : halo-bot, PandaBot : panda-bot",
+        "query": "All Bots : .+ , HaloCommunityBot : halo-bot, PandaBot : panda-bot",
         "skipUrlSync": false,
         "type": "custom"
       },
@@ -768,6 +768,22 @@
         "query": "All Log Lines : .* , Warnings : \\[WRN\\], Errors : \\[ERR\\], Warnings + Errors : \\[(WRN|ERR)\\]",
         "skipUrlSync": false,
         "type": "custom"
+      },
+      {
+        "current": { "selected": true, "text": "All Signals", "value": ".*" },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Signal",
+        "multi": false,
+        "name": "log_signal",
+        "options": [
+          { "selected": true, "text": "All Signals", "value": ".*" },
+          { "selected": false, "text": "Connection Lifecycle", "value": "\\[DiscordLifecycle\\]" },
+          { "selected": false, "text": "Gateway Noise", "value": "Gateway" }
+        ],
+        "query": "All Signals : .* , Connection Lifecycle : \\[DiscordLifecycle\\], Gateway Noise : Gateway",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },
@@ -776,6 +792,6 @@
   "timezone": "",
   "title": "Bot Ops Overview",
   "uid": "bot-ops-overview",
-  "version": 7,
+  "version": 8,
   "weekStart": ""
 }
