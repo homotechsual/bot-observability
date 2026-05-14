@@ -55,12 +55,12 @@
         {
           "targetBlank": false,
           "title": "Status History",
-          "url": "/d/bot-ops-overview/bot-ops-overview?viewPanel=13&from=now-7d&to=now"
+          "url": "/d/bot-ops-overview-components/bot-ops-overview-components?viewPanel=13&from=now-7d&to=now"
         },
         {
           "targetBlank": false,
           "title": "Kuma Scrape Health",
-          "url": "/d/bot-ops-overview/bot-ops-overview?viewPanel=14&from=now-24h&to=now"
+          "url": "/d/bot-ops-overview-components/bot-ops-overview-components?viewPanel=14&from=now-24h&to=now"
         }
       ],
       "options": {
@@ -112,12 +112,12 @@
         {
           "targetBlank": false,
           "title": "Status History",
-          "url": "/d/bot-ops-overview/bot-ops-overview?viewPanel=13&from=now-7d&to=now"
+          "url": "/d/bot-ops-overview-components/bot-ops-overview-components?viewPanel=13&from=now-7d&to=now"
         },
         {
           "targetBlank": false,
           "title": "Kuma Scrape Health",
-          "url": "/d/bot-ops-overview/bot-ops-overview?viewPanel=14&from=now-24h&to=now"
+          "url": "/d/bot-ops-overview-components/bot-ops-overview-components?viewPanel=14&from=now-24h&to=now"
         }
       ],
       "options": {
@@ -213,12 +213,12 @@
         {
           "targetBlank": false,
           "title": "Errors Over Time",
-          "url": "/d/bot-ops-overview/bot-ops-overview?viewPanel=9&from=now-24h&to=now"
+          "url": "/d/bot-ops-overview-components/bot-ops-overview-components?viewPanel=9&from=now-24h&to=now"
         },
         {
           "targetBlank": false,
           "title": "Recent Error Logs",
-          "url": "/d/bot-ops-overview/bot-ops-overview?viewPanel=11&from=now-24h&to=now"
+          "url": "/d/bot-ops-overview-components/bot-ops-overview-components?viewPanel=11&from=now-24h&to=now"
         }
       ],
       "options": {
@@ -262,12 +262,12 @@
         {
           "targetBlank": false,
           "title": "Warnings Over Time",
-          "url": "/d/bot-ops-overview/bot-ops-overview?viewPanel=10&from=now-24h&to=now"
+          "url": "/d/bot-ops-overview-components/bot-ops-overview-components?viewPanel=10&from=now-24h&to=now"
         },
         {
           "targetBlank": false,
           "title": "Recent Warnings + Errors",
-          "url": "/d/bot-ops-overview/bot-ops-overview?viewPanel=12&from=now-24h&to=now"
+          "url": "/d/bot-ops-overview-components/bot-ops-overview-components?viewPanel=12&from=now-24h&to=now"
         }
       ],
       "options": {
@@ -311,12 +311,12 @@
         {
           "targetBlank": false,
           "title": "Errors Over Time",
-          "url": "/d/bot-ops-overview/bot-ops-overview?viewPanel=9&from=now-24h&to=now"
+          "url": "/d/bot-ops-overview-components/bot-ops-overview-components?viewPanel=9&from=now-24h&to=now"
         },
         {
           "targetBlank": false,
           "title": "Recent Error Logs",
-          "url": "/d/bot-ops-overview/bot-ops-overview?viewPanel=11&from=now-24h&to=now"
+          "url": "/d/bot-ops-overview-components/bot-ops-overview-components?viewPanel=11&from=now-24h&to=now"
         }
       ],
       "options": {
@@ -360,12 +360,12 @@
         {
           "targetBlank": false,
           "title": "Warnings Over Time",
-          "url": "/d/bot-ops-overview/bot-ops-overview?viewPanel=10&from=now-24h&to=now"
+          "url": "/d/bot-ops-overview-components/bot-ops-overview-components?viewPanel=10&from=now-24h&to=now"
         },
         {
           "targetBlank": false,
           "title": "Recent Warnings + Errors",
-          "url": "/d/bot-ops-overview/bot-ops-overview?viewPanel=12&from=now-24h&to=now"
+          "url": "/d/bot-ops-overview-components/bot-ops-overview-components?viewPanel=12&from=now-24h&to=now"
         }
       ],
       "options": {
@@ -829,8 +829,8 @@
   "time": { "from": "now-24h", "to": "now" },
   "timepicker": {},
   "timezone": "",
-  "title": "Bot Ops Overview",
-  "uid": "bot-ops-overview",
+  "title": "Bot Ops Overview (Components)",
+  "uid": "bot-ops-overview-components",
   "version": 100,
   "weekStart": ""
 }
