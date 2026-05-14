@@ -11,6 +11,7 @@ scrape_configs:
     scrape_interval: 30s
     metrics_path: /metrics
     basic_auth:
+      username: metrics
       password_file: /run/secrets/kuma_metrics_api_key
     static_configs:
       - targets: ["uptime-kuma:3001"]
