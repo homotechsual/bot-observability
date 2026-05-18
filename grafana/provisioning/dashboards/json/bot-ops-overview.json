@@ -49,7 +49,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 1 },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 1 },
       "id": 1,
       "links": [
         {
@@ -106,7 +106,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 1 },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 1 },
       "id": 2,
       "links": [
         {
@@ -163,7 +163,64 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 1 },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 1 },
+      "id": 26,
+      "links": [
+        {
+          "targetBlank": false,
+          "title": "Status History",
+          "url": "/d/bot-ops-overview-components/bot-ops-overview-components?viewPanel=13&from=now-7d&to=now"
+        },
+        {
+          "targetBlank": false,
+          "title": "Kuma Scrape Health",
+          "url": "/d/bot-ops-overview-components/bot-ops-overview-components?viewPanel=14&from=now-24h&to=now"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "max((monitor_status{monitor_name=~\".*([Hh]udu|[Hh]udu[Cc]ommunity).*\"}) or (monitor_status{name=~\".*([Hh]udu|[Hh]udu[Cc]ommunity).*\"}) or (monitor_status{monitor=~\".*([Hh]udu|[Hh]udu[Cc]ommunity).*\"}) or (monitor_status{friendly_name=~\".*([Hh]udu|[Hh]udu[Cc]ommunity).*\"})) or vector(0)",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "HuduCommunityBot",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            {
+              "options": {
+                "0": { "color": "red",   "text": "Down" },
+                "1": { "color": "green", "text": "Up"   }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red",   "value": null },
+              { "color": "green", "value": 1    }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 1 },
       "id": 3,
       "options": {
         "colorMode": "background",
@@ -207,7 +264,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 6 },
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 6 },
       "id": 4,
       "links": [
         {
@@ -256,7 +313,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 6 },
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 6 },
       "id": 5,
       "links": [
         {
@@ -305,7 +362,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 6 },
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 6 },
       "id": 6,
       "links": [
         {
@@ -354,7 +411,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 6 },
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 6 },
       "id": 7,
       "links": [
         {
@@ -385,6 +442,104 @@
         }
       ],
       "title": "PandaBot Warnings",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green",  "value": null },
+              { "color": "orange", "value": 1    },
+              { "color": "red",    "value": 5    }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 6 },
+      "id": 27,
+      "links": [
+        {
+          "targetBlank": false,
+          "title": "Errors Over Time",
+          "url": "/d/bot-ops-overview-components/bot-ops-overview-components?viewPanel=9&from=now-24h&to=now"
+        },
+        {
+          "targetBlank": false,
+          "title": "Recent Error Logs",
+          "url": "/d/bot-ops-overview-components/bot-ops-overview-components?viewPanel=11&from=now-24h&to=now"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "sum(count_over_time({service=\"hudu-bot\"} |= \"[ERR]\" [24h]))",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "HuduCommunityBot Errors",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green",  "value": null },
+              { "color": "orange", "value": 5    },
+              { "color": "red",    "value": 20   }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 6 },
+      "id": 28,
+      "links": [
+        {
+          "targetBlank": false,
+          "title": "Warnings Over Time",
+          "url": "/d/bot-ops-overview-components/bot-ops-overview-components?viewPanel=10&from=now-24h&to=now"
+        },
+        {
+          "targetBlank": false,
+          "title": "Recent Warnings + Errors",
+          "url": "/d/bot-ops-overview-components/bot-ops-overview-components?viewPanel=12&from=now-24h&to=now"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "sum(count_over_time({service=\"hudu-bot\"} |= \"[WRN]\" [24h]))",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "HuduCommunityBot Warnings",
       "type": "stat"
     },
     {
@@ -419,6 +574,10 @@
           {
             "matcher": { "id": "byRegexp", "options": ".*panda.*" },
             "properties": [{ "id": "displayName", "value": "PandaBot" }]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": ".*hudu.*" },
+            "properties": [{ "id": "displayName", "value": "HuduCommunityBot" }]
           }
         ]
       },
@@ -431,7 +590,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "sum by (service) (count_over_time({service=~\"halo-bot|panda-bot\"} [5m]))",
+          "expr": "sum by (service) (count_over_time({service=~\"halo-bot|panda-bot|hudu-bot\"} [5m]))",
           "legendFormat": "{{service}}",
           "queryType": "range",
           "refId": "A"
@@ -465,6 +624,10 @@
           {
             "matcher": { "id": "byRegexp", "options": ".*panda.*" },
             "properties": [{ "id": "displayName", "value": "PandaBot" }]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": ".*hudu.*" },
+            "properties": [{ "id": "displayName", "value": "HuduCommunityBot" }]
           }
         ]
       },
@@ -477,7 +640,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "sum by (service) (count_over_time({service=~\"halo-bot|panda-bot\"} |= \"[ERR]\" [5m]))",
+          "expr": "sum by (service) (count_over_time({service=~\"halo-bot|panda-bot|hudu-bot\"} |= \"[ERR]\" [5m]))",
           "legendFormat": "{{service}}",
           "queryType": "range",
           "refId": "A"
@@ -511,6 +674,10 @@
           {
             "matcher": { "id": "byRegexp", "options": ".*panda.*" },
             "properties": [{ "id": "displayName", "value": "PandaBot" }]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": ".*hudu.*" },
+            "properties": [{ "id": "displayName", "value": "HuduCommunityBot" }]
           }
         ]
       },
@@ -523,7 +690,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "sum by (service) (count_over_time({service=~\"halo-bot|panda-bot\"} |= \"[WRN]\" [5m]))",
+          "expr": "sum by (service) (count_over_time({service=~\"halo-bot|panda-bot|hudu-bot\"} |= \"[WRN]\" [5m]))",
           "legendFormat": "{{service}}",
           "queryType": "range",
           "refId": "A"
@@ -634,6 +801,10 @@
           {
             "matcher": { "id": "byRegexp", "options": ".*Panda.*" },
             "properties": [{ "id": "displayName", "value": "PandaBot" }]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": ".*Hudu.*" },
+            "properties": [{ "id": "displayName", "value": "HuduCommunityBot" }]
           }
         ]
       },
@@ -646,7 +817,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "monitor_status{monitor_name=~\".*([Hh]alo|[Hh]alo[Cc]ommunity|[Pp]anda|[Pp]andamonium).*\"}",
+          "expr": "monitor_status{monitor_name=~\".*([Hh]alo|[Hh]alo[Cc]ommunity|[Pp]anda|[Pp]andamonium|[Hh]udu|[Hh]udu[Cc]ommunity).*\"}",
           "legendFormat": "{{monitor_name}}",
           "refId": "A"
         }
@@ -737,18 +908,19 @@
   "templating": {
     "list": [
       {
-        "current": { "selected": true, "text": "All Bots", "value": "halo-bot|panda-bot" },
+        "current": { "selected": true, "text": "All Bots", "value": "halo-bot|panda-bot|hudu-bot" },
         "hide": 0,
         "includeAll": false,
         "label": "Bot",
         "multi": false,
         "name": "log_bot",
         "options": [
-          { "selected": true, "text": "All Bots", "value": "halo-bot|panda-bot" },
+          { "selected": true, "text": "All Bots", "value": "halo-bot|panda-bot|hudu-bot" },
           { "selected": false, "text": "HaloCommunityBot", "value": "halo-bot" },
-          { "selected": false, "text": "PandaBot", "value": "panda-bot" }
+          { "selected": false, "text": "PandaBot", "value": "panda-bot" },
+          { "selected": false, "text": "HuduCommunityBot", "value": "hudu-bot" }
         ],
-        "query": "All Bots : halo-bot|panda-bot, HaloCommunityBot : halo-bot, PandaBot : panda-bot",
+        "query": "All Bots : halo-bot|panda-bot|hudu-bot, HaloCommunityBot : halo-bot, PandaBot : panda-bot, HuduCommunityBot : hudu-bot",
         "skipUrlSync": false,
         "type": "custom"
       },
@@ -796,6 +968,7 @@
           { "selected": true, "text": "All Components", "value": ".*" },
           { "selected": false, "text": "YouTube Plugin", "value": "youtube" },
           { "selected": false, "text": "Halo Status", "value": "halo_status" },
+          { "selected": false, "text": "Hudu Release", "value": "hudu_release" },
           { "selected": false, "text": "Heartbeat", "value": "heartbeat" },
           { "selected": false, "text": "Discord", "value": "discord" },
           { "selected": false, "text": "Star Citizen", "value": "star_citizen" },
@@ -804,7 +977,7 @@
           { "selected": false, "text": "Ashes of Creation", "value": "ashes_of_creation" },
           { "selected": false, "text": "Other", "value": "other" }
         ],
-        "query": "All Components : .*, YouTube Plugin : youtube, Halo Status : halo_status, Heartbeat : heartbeat, Discord : discord, Star Citizen : star_citizen, Path of Exile : path_of_exile, Return of Reckoning : return_of_reckoning, Ashes of Creation : ashes_of_creation, Other : other",
+        "query": "All Components : .*, YouTube Plugin : youtube, Halo Status : halo_status, Hudu Release : hudu_release, Heartbeat : heartbeat, Discord : discord, Star Citizen : star_citizen, Path of Exile : path_of_exile, Return of Reckoning : return_of_reckoning, Ashes of Creation : ashes_of_creation, Other : other",
         "skipUrlSync": false,
         "type": "custom"
       },

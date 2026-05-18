@@ -23,6 +23,7 @@ jobs:
           GRAFANA_ADMIN_PASSWORD: ci-password
           HALO_LOG_PATH: /tmp/halo-logs
           PANDA_LOG_PATH: /tmp/panda-logs
+          HUDU_LOG_PATH: /tmp/hudu-logs
         run: docker compose -f docker-compose.yml config >/dev/null
 
   deploy:
@@ -259,6 +260,7 @@ jobs:
           GRAFANA_ADMIN_PASSWORD=${{ secrets.GRAFANA_ADMIN_PASSWORD }}
           HALO_LOG_PATH=${{ secrets.HALO_LOG_PATH }}
           PANDA_LOG_PATH=${{ secrets.PANDA_LOG_PATH }}
+          HUDU_LOG_PATH=${{ secrets.HUDU_LOG_PATH }}
           KUMA_METRICS_API_KEY=${{ secrets.KUMA_METRICS_API_KEY }}
           ENVFILE
 

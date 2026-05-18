@@ -19,4 +19,5 @@ jobs:
           GRAFANA_ADMIN_PASSWORD: ci-password
           HALO_LOG_PATH: /tmp/halo-logs
           PANDA_LOG_PATH: /tmp/panda-logs
+          HUDU_LOG_PATH: /tmp/hudu-logs
         run: docker compose -f docker-compose.yml config >/dev/null

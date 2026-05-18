@@ -14,7 +14,7 @@ Shared observability stack for both bots without SSHing into servers.
 
 1. Copy `.env.example` to `.env`.
 2. Set `GRAFANA_ADMIN_USER` and `GRAFANA_ADMIN_PASSWORD`.
-3. Set `HALO_LOG_PATH` and `PANDA_LOG_PATH` to absolute log directories on your host.
+3. Set `HALO_LOG_PATH`, `PANDA_LOG_PATH`, and `HUDU_LOG_PATH` to absolute log directories on your host.
 4. If Uptime Kuma metrics auth is enabled, set `KUMA_METRICS_API_KEY`.
 5. Create Prometheus auth file from that key:
 
@@ -83,6 +83,7 @@ In Grafana Explore:
 
 * Halo logs query: `{service="halo-bot"}`
 * Panda logs query: `{service="panda-bot"}`
+* Hudu logs query: `{service="hudu-bot"}`
 
 ## Notes
 
@@ -115,6 +116,7 @@ Configure these repository secrets before first deployment:
 * `GRAFANA_ADMIN_PASSWORD`: Grafana admin password
 * `HALO_LOG_PATH`: absolute Halo bot logs path on host
 * `PANDA_LOG_PATH`: absolute Panda bot logs path on host
+* `HUDU_LOG_PATH`: absolute Hudu bot logs path on host
 * `KUMA_METRICS_API_KEY`: Uptime Kuma Prometheus API key for `/metrics` scraping when auth is enabled
 
 Deployment behavior:
@@ -156,7 +158,7 @@ Use the reset helper to start from a clean baseline:
 
 What it clears:
 
-* Bot `*.log` files under `HALO_LOG_PATH` and `PANDA_LOG_PATH`
+* Bot `*.log` files under `HALO_LOG_PATH`, `PANDA_LOG_PATH`, and `HUDU_LOG_PATH`
 * Loki data volume (`*loki-data`)
 * Prometheus data volume (`*prometheus-data`) - this clears Grafana history panels such as `Bot Uptime Status Over Time`
 

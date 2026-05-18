@@ -18,7 +18,7 @@ if ! docker compose version >/dev/null 2>&1; then
   exit 1
 fi
 
-# Load .env values if present so HALO_LOG_PATH / PANDA_LOG_PATH can be used.
+# Load .env values if present so HALO_LOG_PATH / PANDA_LOG_PATH / HUDU_LOG_PATH can be used.
 if [[ -f .env ]]; then
   set -a
   # shellcheck disable=SC1091
@@ -93,6 +93,7 @@ docker compose down
 echo "[reset] Clearing bot log files"
 truncate_logs "${HALO_LOG_PATH:-}" "Halo"
 truncate_logs "${PANDA_LOG_PATH:-}" "Panda"
+truncate_logs "${HUDU_LOG_PATH:-}" "Hudu"
 
 echo "[reset] Removing Loki data volume(s)"
 mapfile -t loki_volumes < <(find_loki_volumes)

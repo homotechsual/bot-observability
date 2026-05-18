@@ -90,3 +90,44 @@ scrape_configs:
           job: panda-bot
           service: panda-bot
           __path__: /logs/panda/*.log
+
+  - job_name: hudu-bot
+    pipeline_stages:
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2} [^\[]+) \[(?P<level>[A-Z]{3})\] (?P<source_context>[^ ]+) (?P<message>.*)$'
+      - labels:
+          level:
+          source_context:
+      - static_labels:
+          component: other
+      - match:
+          selector: '{source_context=~".*[Hh]udu[Rr]elease.*"}'
+          stages:
+            - static_labels:
+                component: hudu_release
+      - match:
+          selector: '{source_context=~".*[Hh]alo[Ss]tatus.*"}'
+          stages:
+            - static_labels:
+                component: halo_status
+      - match:
+          selector: '{source_context=~".*[Hh]eartbeat.*"}'
+          stages:
+            - static_labels:
+                component: heartbeat
+      - match:
+          selector: '{source_context=~".*[Yy]outube.*"}'
+          stages:
+            - static_labels:
+                component: youtube
+      - match:
+          selector: '{source_context=~".*([Dd]iscord[Bb]ot[Ss]ervice|[Gg]ateway).*"}'
+          stages:
+            - static_labels:
+                component: discord
+    static_configs:
+      - targets: [localhost]
+        labels:
+          job: hudu-bot
+          service: hudu-bot
+          __path__: /logs/hudu/*.log

@@ -37,6 +37,7 @@ services:
       - ./promtail/config.yml:/etc/promtail/config.yml:ro
       - ${HALO_LOG_PATH}:/logs/halo:ro
       - ${PANDA_LOG_PATH}:/logs/panda:ro
+      - ${HUDU_LOG_PATH}:/logs/hudu:ro
     depends_on:
       - loki
 
