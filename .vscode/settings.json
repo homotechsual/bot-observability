@@ -4,8 +4,11 @@
         "elif",
         "ENVFILE",
         "esac",
+        "hudu",
         "keygen",
+        "louislam",
         "mktemp",
+        "promtail",
         "publickey"
     ]
 }
