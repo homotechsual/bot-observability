@@ -29,7 +29,7 @@ services:
       - loki-data:/loki
 
   promtail:
-    image: grafana/promtail:3.7.2
+    image: grafana/promtail:3.6.11
     container_name: bot-observability-promtail
     restart: unless-stopped
     command: ["-config.file=/etc/promtail/config.yml"]
