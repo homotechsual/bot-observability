@@ -9,4 +9,4 @@ providers:
     allowUiUpdates: false
     updateIntervalSeconds: 10
     options:
-      path: /etc/grafana/provisioning/dashboards/json
+      path: /var/lib/grafana/dashboards
