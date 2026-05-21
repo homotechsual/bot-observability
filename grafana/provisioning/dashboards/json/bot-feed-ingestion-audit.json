@@ -268,7 +268,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |~ \"Observed Halo status candidate|Posted Halo status update|Error polling Halo status feed\"",
+          "expr": "{service=~\"halo-bot|hudu-bot\",component=\"halo_status\"}",
           "queryType": "range",
           "refId": "A"
         }
