@@ -268,12 +268,12 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |= \"monitor started. Polling\"",
+          "expr": "({service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |= \"Observed Halo status candidate\") or ({service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |= \"Posted Halo status update\") or ({service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |= \"Error polling Halo status feed\")",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "Halo Status Poll Configuration Logs",
+      "title": "Halo Status Poll Activity Logs",
       "type": "logs"
     },
     {
