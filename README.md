@@ -42,6 +42,13 @@ A starter dashboard named `Bot Ops Overview` is auto-provisioned with:
 * Error/warning stats and trends (Loki)
 * Recent error logs (Loki)
 
+A second dashboard named `Feed Ingestion Audit` is also auto-provisioned for feed verification checks:
+
+* YouTube posted events across Halo + Hudu bots (time-ordered log stream)
+* Hudu release posted events
+* Halo status posted events across Halo + Hudu bots
+* 24h stat cards for quick "is ingestion happening" verification
+
 If the `Uptime Kuma Scrape Health` panel shows no data, enable Prometheus metrics in Uptime Kuma settings and refresh Grafana.
 
 ## 3.1 Make Dashboards Web Accessible (No SSH)
