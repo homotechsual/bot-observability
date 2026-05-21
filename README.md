@@ -132,7 +132,7 @@ Deployment behavior:
 2. Upload bundle to host.
 3. Extract into `OBSERVABILITY_TARGET_PATH/current`.
 4. Generate `.env` from secrets.
-5. Run `docker compose pull` and `docker compose up -d --remove-orphans`.
+5. Run `docker compose pull`, force-recreate Grafana (to refresh dashboard provisioning bind mounts), then run `docker compose up -d --remove-orphans`.
 6. If any deploy step fails, restore previous release and restart stack from backup.
 
 ## Uptime Kuma Data Persistence and Backup

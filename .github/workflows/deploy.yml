@@ -313,7 +313,9 @@ jobs:
             sh -c 'chown -R 472:472 /var/lib/grafana'
           echo "[deploy] docker compose pull"
           docker compose pull
-          echo "[deploy] docker compose up"
+          echo "[deploy] docker compose up (force recreate grafana to refresh dashboard bind mounts)"
+          docker compose up -d --remove-orphans --no-deps --force-recreate grafana
+          echo "[deploy] docker compose up (all services)"
           docker compose up -d --remove-orphans
           echo "[deploy] docker compose ps"
           docker compose ps
