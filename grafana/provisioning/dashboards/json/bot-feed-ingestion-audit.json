@@ -268,7 +268,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{service=~\"halo-bot|hudu-bot\",component=\"halo_status\"}",
+          "expr": "{service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} !~ \"disabled or has no channel configured\"",
           "queryType": "range",
           "refId": "A"
         }
