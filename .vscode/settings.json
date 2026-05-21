@@ -14,5 +14,9 @@
         "rgba",
         "timepicker",
         "timezone"
-    ]
+    ],
+    "shellcheck.exclude": [".git/hooks/*"],
+    "shellcheck.ignorePatterns": {
+        "**/.git/hooks/*": true
+    }
 }
