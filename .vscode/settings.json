@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "controlmasters",
+        "dedup",
         "elif",
         "ENVFILE",
         "esac",
@@ -9,6 +10,9 @@
         "louislam",
         "mktemp",
         "promtail",
-        "publickey"
+        "publickey",
+        "rgba",
+        "timepicker",
+        "timezone"
     ]
 }

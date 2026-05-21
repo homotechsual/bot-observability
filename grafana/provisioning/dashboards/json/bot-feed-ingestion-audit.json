@@ -466,90 +466,24 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 58 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 58 },
       "id": 19,
       "options": {
         "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false },
         "showHeader": true,
-        "sortBy": [{ "desc": true, "displayName": "Last Posted" }]
+        "sortBy": [{ "desc": true, "displayName": "Time" }]
       },
       "pluginVersion": "10.4.1",
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{service=~\"halo-bot|hudu-bot\",component=\"youtube\"} |= \"Posted YouTube video\" | pattern \"Posted YouTube video <_> from <channel> (<_>) published <_>\" | stats max(__timestamp) as last_posted by channel | sort last_posted desc",
+          "expr": "{service=~\"halo-bot|hudu-bot\",component=\"youtube\"} |= \"Posted YouTube video\"",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "YouTube Last Posted by Channel",
-      "type": "table"
-    },
-    {
-      "datasource": { "type": "loki", "uid": "loki" },
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "thresholds" },
-          "mappings": [],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 58 },
-      "id": 20,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "/.+/", "values": false },
-        "textMode": "auto"
-      },
-      "pluginVersion": "10.4.1",
-      "targets": [
-        {
-          "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{service=\"hudu-bot\",component=\"hudu_release\"} |= \"Posted Hudu release update\" | pattern \"Posted Hudu release update <_> (<_>) published <published>\" | max without() (timestamp(__timestamp))",
-          "queryType": "range",
-          "refId": "A"
-        }
-      ],
-      "title": "Hudu Release Last Posted",
-      "type": "stat"
-    },
-    {
-      "datasource": { "type": "loki", "uid": "loki" },
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "thresholds" },
-          "mappings": [],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 58 },
-      "id": 21,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "/.+/", "values": false },
-        "textMode": "auto"
-      },
-      "pluginVersion": "10.4.1",
-      "targets": [
-        {
-          "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |= \"Posted Halo status update\" | pattern \"Posted Halo status update <_>: <_>\" | max without() (timestamp(__timestamp))",
-          "queryType": "range",
-          "refId": "A"
-        }
-      ],
-      "title": "Halo Status Last Posted",
-      "type": "stat"
+      "title": "YouTube Last Posted (Most Recent Events)",
+      "type": "logs"
     }
   ],
   "refresh": "30s",
