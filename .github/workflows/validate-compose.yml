@@ -21,3 +21,35 @@ jobs:
           PANDA_LOG_PATH: /tmp/panda-logs
           HUDU_LOG_PATH: /tmp/hudu-logs
         run: docker compose -f docker-compose.yml config >/dev/null
+
+      - name: Validate dashboard JSON files
+        run: |
+          for json_file in grafana/provisioning/dashboards/json/*.json; do
+            echo "Validating $json_file..."
+            
+            # Check JSON syntax
+            if ! jq empty "$json_file" 2>/dev/null; then
+              echo "ERROR: Invalid JSON in $json_file"
+              jq empty "$json_file"
+              exit 1
+            fi
+            
+            # Check required Grafana dashboard fields
+            if ! jq -e '.title and .panels and .schemaVersion' "$json_file" >/dev/null 2>&1; then
+              echo "ERROR: Missing required Grafana dashboard fields in $json_file (need: title, panels, schemaVersion)"
+              exit 1
+            fi
+            
+            # Check that all panels have required fields
+            if ! jq -e '.panels | all(.type and .id and .gridPos)' "$json_file" >/dev/null 2>&1; then
+              echo "ERROR: Panel(s) in $json_file missing required fields (type, id, gridPos)"
+              jq '.panels[] | select(.type == null or .id == null or .gridPos == null)' "$json_file"
+              exit 1
+            fi
+            
+            echo "  ✓ JSON syntax valid"
+            echo "  ✓ Required dashboard fields present"
+            echo "  ✓ All panels have required configuration"
+          done
+          echo ""
+          echo "All dashboard JSON files are valid."

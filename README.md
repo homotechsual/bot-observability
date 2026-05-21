@@ -49,6 +49,41 @@ A second dashboard named `Feed Ingestion Audit` is also auto-provisioned for fee
 * Halo status posted events across Halo + Hudu bots
 * 24h stat cards for quick "is ingestion happening" verification
 
+## Dashboard Development & Validation
+
+### GitHub Actions (Automated CI Check)
+
+All dashboard JSON files are validated on every push/PR via GitHub Actions (`.github/workflows/validate-compose.yml`). If a dashboard has invalid JSON, the workflow will fail and block the PR.
+
+### Local Pre-Commit Hook (Catch Issues Before Push)
+
+To validate dashboard JSON files locally before committing:
+
+**Windows (PowerShell):**
+
+```powershell
+.\setup-hooks.ps1
+```
+
+**Linux/macOS (Bash):**
+
+```bash
+./setup-hooks.sh
+chmod +x .git/hooks/pre-commit
+```
+
+After setup, any commit that includes a malformed dashboard JSON file will be rejected with an error message pointing to the exact syntax issue.
+
+To bypass validation (not recommended):
+
+```bash
+git commit --no-verify
+```
+
+### VS Code (Real-Time Validation)
+
+Install the **JSON** extension (built-in) or **JSON Tools** extension for real-time schema validation of dashboard files as you edit.
+
 If the `Uptime Kuma Scrape Health` panel shows no data, enable Prometheus metrics in Uptime Kuma settings and refresh Grafana.
 
 ## 3.1 Make Dashboards Web Accessible (No SSH)
