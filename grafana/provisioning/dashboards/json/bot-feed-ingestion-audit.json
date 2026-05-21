@@ -268,7 +268,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "({service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |= \"Observed Halo status candidate\") or ({service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |= \"Posted Halo status update\") or ({service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |= \"Error polling Halo status feed\")",
+          "expr": "{service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |~ \"Observed Halo status candidate|Posted Halo status update|Error polling Halo status feed\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -436,7 +436,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "({service=\"hudu-bot\",component=\"hudu_release\"} |= \"Observed Hudu release candidate\") or ({service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |= \"Observed Halo status candidate\")",
+          "expr": "{service=~\"halo-bot|hudu-bot\",component=~\"hudu_release|halo_status\"} |~ \"Observed Hudu release candidate|Observed Halo status candidate\"",
           "queryType": "range",
           "refId": "A"
         }
