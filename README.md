@@ -9,6 +9,7 @@ Shared observability stack for both bots without SSHing into servers.
 * Loki (log storage)
 * Promtail (log shipping from bot log folders)
 * Prometheus (metrics for Grafana): <http://127.0.0.1:9090>
+* Raw feed exporter (latest source item metadata for Grafana feed cards)
 
 ## 1. Configure Environment
 
@@ -16,7 +17,10 @@ Shared observability stack for both bots without SSHing into servers.
 2. Set `GRAFANA_ADMIN_USER` and `GRAFANA_ADMIN_PASSWORD`.
 3. Set `HALO_LOG_PATH`, `PANDA_LOG_PATH`, and `HUDU_LOG_PATH` to absolute log directories on your host.
 4. If Uptime Kuma metrics auth is enabled, set `KUMA_METRICS_API_KEY`.
-5. Create Prometheus auth file from that key:
+5. Optionally set `YOUTUBE_FEED_URLS` (comma-separated raw YouTube feed URLs) for raw-source latest-item cards.
+6. Optionally override `HALO_STATUS_FEED_URL` / `HUDU_RELEASE_FEED_URL` if your source endpoints differ.
+7. For runtime-managed YouTube channels, set `HALO_DB_DIR` and `HUDU_DB_DIR` so the exporter can read bot SQLite `YoutubeTrackedChannels`.
+8. Create Prometheus auth file from that key:
 
 ```powershell
 New-Item -ItemType Directory -Force -Path .\secrets | Out-Null
@@ -48,6 +52,9 @@ A second dashboard named `Feed Ingestion Audit` is also auto-provisioned for fee
 * Hudu release posted events
 * Halo status posted events across Halo + Hudu bots
 * 24h stat cards for quick "is ingestion happening" verification
+* Last source feed activity cards backed by raw feed endpoints via Prometheus
+* YouTube channel discovery health card (count from bot SQLite DB)
+* YouTube raw feed scrape health card (OK/Failed)
 
 ## Dashboard Development & Validation
 
@@ -160,6 +167,13 @@ Configure these repository secrets before first deployment:
 * `PANDA_LOG_PATH`: absolute Panda bot logs path on host
 * `HUDU_LOG_PATH`: absolute Hudu bot logs path on host
 * `KUMA_METRICS_API_KEY`: Uptime Kuma Prometheus API key for `/metrics` scraping when auth is enabled
+* `YOUTUBE_FEED_URLS`: optional comma-separated raw YouTube feed URLs for source-level latest-item metrics
+* `HALO_STATUS_FEED_URL`: optional override for Halo status RSS URL used by raw feed exporter
+* `HUDU_RELEASE_FEED_URL`: optional override for Hudu releases JSON URL used by raw feed exporter
+* `HALO_DB_DIR`: optional absolute directory containing Halo bot SQLite DB (for dynamic YouTube channel discovery)
+* `HALO_DB_FILE`: optional Halo SQLite filename (default: `halocommunitybot.db`)
+* `HUDU_DB_DIR`: optional absolute directory containing Hudu bot SQLite DB (for dynamic YouTube channel discovery)
+* `HUDU_DB_FILE`: optional Hudu SQLite filename (default: `huducommunitybot.db`)
 
 Deployment behavior:
 

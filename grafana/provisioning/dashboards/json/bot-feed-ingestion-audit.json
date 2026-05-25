@@ -452,106 +452,202 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "loki", "uid": "loki" },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "fieldConfig": {
         "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": { "type": "auto" },
-            "inspect": false
-          },
+          "color": { "mode": "thresholds" },
           "mappings": [],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
-          "unit": "short"
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          },
+          "unit": "dateTimeAsIso"
         },
         "overrides": []
       },
       "gridPos": { "h": 8, "w": 8, "x": 0, "y": 58 },
       "id": 19,
       "options": {
-        "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false },
-        "showHeader": true,
-        "sortBy": [{ "desc": true, "displayName": "Time" }]
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "value_and_name"
       },
-      "pluginVersion": "10.4.1",
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{service=~\"halo-bot|hudu-bot\",component=\"youtube\"} |= \"Observed YouTube candidate video\"",
-          "queryType": "range",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "raw_feed_latest_item_unixtime{feed=\"youtube\"}",
+          "instant": true,
+          "legendFormat": "{{item_title}}",
           "refId": "A"
         }
       ],
-      "title": "YouTube Feed Last Published (Most Recent Seen)",
-      "type": "logs"
+      "title": "YouTube Feed Last Published (Raw Feed)",
+      "type": "stat"
     },
     {
-      "datasource": { "type": "loki", "uid": "loki" },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "fieldConfig": {
         "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": { "type": "auto" },
-            "inspect": false
-          },
+          "color": { "mode": "thresholds" },
           "mappings": [],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
-          "unit": "short"
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          },
+          "unit": "dateTimeAsIso"
         },
         "overrides": []
       },
       "gridPos": { "h": 8, "w": 8, "x": 8, "y": 58 },
       "id": 20,
       "options": {
-        "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false },
-        "showHeader": true,
-        "sortBy": [{ "desc": true, "displayName": "Time" }]
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "value_and_name"
       },
-      "pluginVersion": "10.4.1",
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |= \"Observed Halo status candidate\"",
-          "queryType": "range",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "raw_feed_latest_item_unixtime{feed=\"halo_status\"}",
+          "instant": true,
+          "legendFormat": "{{item_title}}",
           "refId": "A"
         }
       ],
-      "title": "Halo Feed Last Published (Most Recent Seen)",
-      "type": "logs"
+      "title": "Halo Feed Last Published (Raw Feed)",
+      "type": "stat"
     },
     {
-      "datasource": { "type": "loki", "uid": "loki" },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "fieldConfig": {
         "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": { "type": "auto" },
-            "inspect": false
-          },
+          "color": { "mode": "thresholds" },
           "mappings": [],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
-          "unit": "short"
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          },
+          "unit": "dateTimeAsIso"
         },
         "overrides": []
       },
       "gridPos": { "h": 8, "w": 8, "x": 16, "y": 58 },
       "id": 21,
       "options": {
-        "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false },
-        "showHeader": true,
-        "sortBy": [{ "desc": true, "displayName": "Time" }]
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "value_and_name"
       },
-      "pluginVersion": "10.4.1",
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{service=\"hudu-bot\",component=\"hudu_release\"} |= \"Observed Hudu release candidate\"",
-          "queryType": "range",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "raw_feed_latest_item_unixtime{feed=\"hudu_release\"}",
+          "instant": true,
+          "legendFormat": "{{item_title}}",
           "refId": "A"
         }
       ],
-      "title": "Hudu Feed Last Published (Most Recent Seen)",
-      "type": "logs"
+      "title": "Hudu Feed Last Published (Raw Feed)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 66 },
+      "id": 22,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "raw_feed_youtube_discovered_channels",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "YouTube Channels Discovered (Bot DB)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            {
+              "options": {
+                "0": { "color": "red", "text": "Failed" },
+                "1": { "color": "green", "text": "OK" }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 66 },
+      "id": 23,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "raw_feed_scrape_success{feed=\"youtube\"}",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "YouTube Raw Feed Scrape Health",
+      "type": "stat"
     }
   ],
   "refresh": "30s",
@@ -566,13 +662,13 @@
     "list": []
   },
   "time": {
-    "from": "now-90d",
+    "from": "now-5y",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Feed Ingestion Audit",
   "uid": "bot-feed-ingestion-audit",
-  "version": 1,
+  "version": 4,
   "weekStart": ""
 }

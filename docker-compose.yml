@@ -68,6 +68,25 @@ services:
     depends_on:
       - uptime-kuma
 
+  raw-feed-exporter:
+    image: python:3.12-alpine
+    container_name: bot-observability-raw-feed-exporter
+    restart: unless-stopped
+    command: ["python", "/app/raw-feed-exporter.py"]
+    environment:
+      - HALO_STATUS_FEED_URL=${HALO_STATUS_FEED_URL:-https://status.haloservicesolutions.com/pages/63ef45da7ee94905308a1a4a/rss}
+      - HUDU_RELEASE_FEED_URL=${HUDU_RELEASE_FEED_URL:-https://hq.hudu.com/public/releases.json}
+      - YOUTUBE_FEED_URLS=${YOUTUBE_FEED_URLS:-}
+      - HALO_DB_PATH=/db/halo/${HALO_DB_FILE:-halocommunitybot.db}
+      - HUDU_DB_PATH=/db/hudu/${HUDU_DB_FILE:-huducommunitybot.db}
+      - RAW_FEED_EXPORTER_PORT=9115
+      - RAW_FEED_TIMEOUT_SECONDS=20
+      - RAW_FEED_CACHE_SECONDS=60
+    volumes:
+      - ./deploy/raw-feed-exporter.py:/app/raw-feed-exporter.py:ro
+      - ${HALO_DB_DIR:-.}:/db/halo:ro
+      - ${HUDU_DB_DIR:-.}:/db/hudu:ro
+
 volumes:
   grafana-data:
     external: true
