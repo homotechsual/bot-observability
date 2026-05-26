@@ -9,6 +9,8 @@ services:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
       - GF_USERS_ALLOW_SIGN_UP=false
+      - GOMEMLIMIT=350MiB
+    mem_limit: 450m
     volumes:
       - grafana-data:/var/lib/grafana
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
@@ -23,6 +25,9 @@ services:
     container_name: bot-observability-loki
     restart: unless-stopped
     command: ["-config.file=/etc/loki/config.yml"]
+    environment:
+      - GOMEMLIMIT=300MiB
+    mem_limit: 380m
     ports:
       - "127.0.0.1:3100:3100"
     volumes:
@@ -34,6 +39,9 @@ services:
     container_name: bot-observability-promtail
     restart: unless-stopped
     command: ["-config.file=/etc/promtail/config.yml"]
+    environment:
+      - GOMEMLIMIT=200MiB
+    mem_limit: 256m
     volumes:
       - ./promtail/config.yml:/etc/promtail/config.yml:ro
       - ${HALO_LOG_PATH}:/logs/halo:ro
@@ -48,6 +56,9 @@ services:
     restart: unless-stopped
     ports:
       - "127.0.0.1:3001:3001"
+    environment:
+      - NODE_OPTIONS=--max-old-space-size=384
+    mem_limit: 512m
     volumes:
       - kuma-data:/app/data
 
@@ -60,7 +71,11 @@ services:
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
-      - "--storage.tsdb.retention.time=15d"
+      - "--storage.tsdb.retention.time=7d"
+      - "--storage.tsdb.retention.size=1GB"
+    environment:
+      - GOMEMLIMIT=300MiB
+    mem_limit: 384m
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
