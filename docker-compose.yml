@@ -67,6 +67,7 @@ services:
       - ./secrets/kuma_metrics_api_key:/run/secrets/kuma_metrics_api_key:ro
     depends_on:
       - uptime-kuma
+      - raw-feed-exporter
 
   raw-feed-exporter:
     image: python:3.12-alpine
