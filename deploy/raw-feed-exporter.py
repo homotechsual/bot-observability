@@ -342,22 +342,66 @@ def build_youtube_urls() -> list[str]:
     return sorted(urls)
 
 
-def discovered_youtube_channel_ids() -> list[str]:
-    references = discovered_youtube_references()
+def candidate_db_paths_for_source(db_path: str) -> list[str]:
+    candidates: set[str] = set()
 
+    if db_path and os.path.exists(db_path):
+        candidates.add(db_path)
+
+    folder = os.path.dirname(db_path)
+    if folder and os.path.isdir(folder):
+        for name in os.listdir(folder):
+            if name.lower().endswith(".db"):
+                candidates.add(os.path.join(folder, name))
+
+    return sorted(candidates)
+
+
+def source_db_paths() -> dict[str, str]:
+    return {
+        "halo": HALO_DB_PATH,
+        "hudu": HUDU_DB_PATH,
+    }
+
+
+def discovered_youtube_references_by_source() -> dict[str, set[str]]:
+    references_by_source: dict[str, set[str]] = {}
+
+    for source_name, db_path in source_db_paths().items():
+        references: set[str] = set()
+        for path in candidate_db_paths_for_source(db_path):
+            references.update(query_channel_ids(path))
+        references_by_source[source_name] = references
+
+    return references_by_source
+
+
+def discovered_youtube_channel_ids_by_source() -> dict[str, list[str]]:
+    channel_ids_by_source: dict[str, list[str]] = {}
+
+    for source_name, references in discovered_youtube_references_by_source().items():
+        channel_ids: set[str] = set()
+        for reference in references:
+            normalized = normalize_channel_id(reference)
+            if normalized:
+                channel_ids.add(normalized)
+        channel_ids_by_source[source_name] = sorted(channel_ids)
+
+    return channel_ids_by_source
+
+
+def discovered_youtube_channel_ids() -> list[str]:
     channel_ids: set[str] = set()
-    for reference in references:
-        normalized = normalize_channel_id(reference)
-        if normalized:
-            channel_ids.add(normalized)
+    for source_channel_ids in discovered_youtube_channel_ids_by_source().values():
+        channel_ids.update(source_channel_ids)
 
     return sorted(channel_ids)
 
 
 def discovered_youtube_references() -> set[str]:
     references: set[str] = set()
-    for db_path in candidate_db_paths():
-        references.update(query_channel_ids(db_path))
+    for source_references in discovered_youtube_references_by_source().values():
+        references.update(source_references)
     return references
 
 
@@ -435,6 +479,8 @@ def scrape_metrics() -> str:
     db_candidates = candidate_db_paths()
     db_readable = [path for path in db_candidates if os.path.exists(path)]
     youtube_references = discovered_youtube_references()
+    youtube_references_by_source = discovered_youtube_references_by_source()
+    youtube_channel_ids_by_source = discovered_youtube_channel_ids_by_source()
     youtube_channel_ids = sorted(
         {
             normalized
@@ -456,12 +502,16 @@ def scrape_metrics() -> str:
         "# TYPE raw_feed_youtube_first_failure_info gauge",
         "# HELP raw_feed_youtube_discovered_channels Number of unique YouTube channel IDs discovered from bot SQLite databases.",
         "# TYPE raw_feed_youtube_discovered_channels gauge",
+        "# HELP raw_feed_youtube_discovered_channels_by_source Number of unique YouTube channel IDs discovered per source database.",
+        "# TYPE raw_feed_youtube_discovered_channels_by_source gauge",
         "# HELP raw_feed_youtube_db_candidate_files Number of SQLite DB files considered for YouTube discovery.",
         "# TYPE raw_feed_youtube_db_candidate_files gauge",
         "# HELP raw_feed_youtube_db_readable_files Number of candidate SQLite DB files that exist and are readable by exporter.",
         "# TYPE raw_feed_youtube_db_readable_files gauge",
         "# HELP raw_feed_youtube_discovered_references Number of raw YouTube channel references found before normalization.",
         "# TYPE raw_feed_youtube_discovered_references gauge",
+        "# HELP raw_feed_youtube_discovered_references_by_source Number of raw YouTube channel references found per source database before normalization.",
+        "# TYPE raw_feed_youtube_discovered_references_by_source gauge",
     ]
 
     scrape_time = now_utc().timestamp()
@@ -469,6 +519,15 @@ def scrape_metrics() -> str:
     lines.append(f"raw_feed_youtube_db_readable_files {len(db_readable)}")
     lines.append(f"raw_feed_youtube_discovered_references {len(youtube_references)}")
     lines.append(f"raw_feed_youtube_discovered_channels {len(youtube_channel_ids)}")
+
+    for source_name, references in youtube_references_by_source.items():
+        channel_ids = youtube_channel_ids_by_source.get(source_name, [])
+        lines.append(
+            f'raw_feed_youtube_discovered_references_by_source{{source="{source_name}"}} {len(references)}'
+        )
+        lines.append(
+            f'raw_feed_youtube_discovered_channels_by_source{{source="{source_name}"}} {len(channel_ids)}'
+        )
 
     for target in feed_targets(youtube_urls):
         feed_name = target["feed"]
