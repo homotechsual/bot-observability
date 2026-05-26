@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sqlite3
 import time
 import urllib.error
@@ -35,6 +36,8 @@ TIMEOUT_SECONDS = float(os.getenv("RAW_FEED_TIMEOUT_SECONDS", "20"))
 CACHE_SECONDS = float(os.getenv("RAW_FEED_CACHE_SECONDS", "60"))
 
 _CACHE: dict[str, Any] = {"expires_at": 0.0, "payload": ""}
+_HANDLE_CACHE: dict[str, str] = {}
+_CHANNEL_ID_RE = re.compile(r"\bUC[a-zA-Z0-9_-]{20,30}\b")
 
 
 def now_utc() -> datetime:
@@ -238,22 +241,31 @@ def query_channel_ids(db_path: str) -> list[str]:
     try:
         cursor = connection.cursor()
         table_names = {row[0] for row in cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")}
-        if "YoutubeTrackedChannels" not in table_names:
-            return []
 
-        # Prefer enabled channels when schema supports it; otherwise include all rows.
-        columns = {row[1] for row in cursor.execute("PRAGMA table_info('YoutubeTrackedChannels')")}
-        if "IsEnabled" in columns:
+        if "YoutubeTrackedChannels" in table_names:
+            # Prefer enabled channels when schema supports it; otherwise include all rows.
+            columns = {row[1] for row in cursor.execute("PRAGMA table_info('YoutubeTrackedChannels')")}
+            if "IsEnabled" in columns:
+                rows = cursor.execute(
+                    "SELECT ChannelId FROM YoutubeTrackedChannels WHERE COALESCE(IsEnabled, 1) = 1"
+                )
+            else:
+                rows = cursor.execute("SELECT ChannelId FROM YoutubeTrackedChannels")
+
+            for row in rows:
+                value = str(row[0]).strip() if row and row[0] else ""
+                if value:
+                    ids.add(value)
+
+        # FeedPostStates is a useful fallback when tracked-channel rows are missing or stale.
+        if "FeedPostStates" in table_names:
             rows = cursor.execute(
-                "SELECT ChannelId FROM YoutubeTrackedChannels WHERE COALESCE(IsEnabled, 1) = 1"
+                "SELECT SourceId FROM FeedPostStates WHERE FeedType = 'YouTube'"
             )
-        else:
-            rows = cursor.execute("SELECT ChannelId FROM YoutubeTrackedChannels")
-
-        for row in rows:
-            value = str(row[0]).strip() if row and row[0] else ""
-            if value:
-                ids.add(value)
+            for row in rows:
+                value = str(row[0]).strip() if row and row[0] else ""
+                if value:
+                    ids.add(value)
     finally:
         connection.close()
 
@@ -272,9 +284,87 @@ def build_youtube_urls() -> list[str]:
 
 
 def discovered_youtube_channel_ids() -> list[str]:
-    channel_ids = set(query_channel_ids(HALO_DB_PATH))
-    channel_ids.update(query_channel_ids(HUDU_DB_PATH))
+    references: set[str] = set()
+    for db_path in candidate_db_paths():
+        references.update(query_channel_ids(db_path))
+
+    channel_ids: set[str] = set()
+    for reference in references:
+        normalized = normalize_channel_id(reference)
+        if normalized:
+            channel_ids.add(normalized)
+
     return sorted(channel_ids)
+
+
+def candidate_db_paths() -> list[str]:
+    candidates: set[str] = set()
+    explicit_paths = [HALO_DB_PATH, HUDU_DB_PATH]
+
+    for path in explicit_paths:
+        if path and os.path.exists(path):
+            candidates.add(path)
+
+    # Fall back to scanning configured DB directories in case file names differ.
+    for path in explicit_paths:
+        folder = os.path.dirname(path)
+        if not folder or not os.path.isdir(folder):
+            continue
+        for name in os.listdir(folder):
+            if name.lower().endswith(".db"):
+                candidates.add(os.path.join(folder, name))
+
+    return sorted(candidates)
+
+
+def normalize_channel_id(reference: str) -> Optional[str]:
+    text = reference.strip()
+    if not text:
+        return None
+
+    if text.startswith("http"):
+        match = _CHANNEL_ID_RE.search(text)
+        if match:
+            return match.group(0)
+
+        # Handle URLs like https://www.youtube.com/@handle by resolving channelId from HTML.
+        if "youtube.com/@" in text:
+            return resolve_channel_id_from_handle_url(text)
+
+    if _CHANNEL_ID_RE.fullmatch(text):
+        return text
+
+    if text.startswith("@"):
+        return resolve_channel_id_from_handle_url(f"https://www.youtube.com/{text}")
+
+    return None
+
+
+def resolve_channel_id_from_handle_url(url: str) -> Optional[str]:
+    cached = _HANDLE_CACHE.get(url)
+    if cached:
+        return cached
+
+    try:
+        request = urllib.request.Request(
+            url,
+            headers={
+                "User-Agent": "bot-observability-raw-feed-exporter/1.0",
+                "Accept": "text/html,application/xhtml+xml",
+            },
+        )
+        with urllib.request.urlopen(request, timeout=TIMEOUT_SECONDS) as response:  # nosec B310
+            body = response.read().decode("utf-8", errors="replace")
+    except (urllib.error.URLError, TimeoutError, ValueError):
+        return None
+
+    match = _CHANNEL_ID_RE.search(body)
+    if not match:
+        return None
+
+    channel_id = match.group(0)
+    _HANDLE_CACHE[url] = channel_id
+    return channel_id
 
 
 def scrape_metrics() -> str:

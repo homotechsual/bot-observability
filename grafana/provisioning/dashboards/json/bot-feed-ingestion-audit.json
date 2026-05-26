@@ -487,7 +487,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "raw_feed_latest_item_unixtime{feed=\"youtube\"} or on() vector(0)",
+          "expr": "(raw_feed_latest_item_unixtime{feed=\"youtube\"} * 1000) or on() vector(0)",
           "instant": true,
           "legendFormat": "{{item_title}}",
           "refId": "A"
@@ -532,7 +532,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "raw_feed_latest_item_unixtime{feed=\"halo_status\"} or on() vector(0)",
+          "expr": "(raw_feed_latest_item_unixtime{feed=\"halo_status\"} * 1000) or on() vector(0)",
           "instant": true,
           "legendFormat": "{{item_title}}",
           "refId": "A"
@@ -577,7 +577,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "raw_feed_latest_item_unixtime{feed=\"hudu_release\"} or on() vector(0)",
+          "expr": "(raw_feed_latest_item_unixtime{feed=\"hudu_release\"} * 1000) or on() vector(0)",
           "instant": true,
           "legendFormat": "{{item_title}}",
           "refId": "A"
