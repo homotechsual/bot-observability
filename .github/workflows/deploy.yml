@@ -127,6 +127,7 @@ jobs:
           KUMA_VOLUME_NAME="bot-observability-kuma-data"
           PROMETHEUS_VOLUME_NAME="bot-observability-prometheus-data"
           KUMA_BACKUP_FILE="$BACKUP_PATH/kuma-data-$TIMESTAMP.tar.gz"
+          GRAFANA_PROVISIONING_HASH_FILE="$BACKUP_PATH/grafana-provisioning.sha256"
           RELEASE_BACKUP_RETENTION=5
           KUMA_BACKUP_RETENTION=5
 
@@ -318,15 +319,44 @@ jobs:
           docker volume create bot-observability-loki-data
           docker volume create bot-observability-kuma-data
           docker volume create bot-observability-prometheus-data
-          echo "[deploy] Normalizing Grafana data volume permissions (uid 472)"
-          timed_run "grafana volume chown" docker run --rm \
+          echo "[deploy] Checking Grafana data volume ownership (uid 472)"
+          grafana_owner=$(docker run --rm \
             -v bot-observability-grafana-data:/var/lib/grafana \
             alpine:3.20 \
-            sh -c 'chown -R 472:472 /var/lib/grafana'
+            sh -c 'stat -c "%u:%g" /var/lib/grafana 2>/dev/null || echo "unknown"')
+          if [ "$grafana_owner" = "472:472" ]; then
+            echo "[deploy] Grafana data volume ownership already 472:472; skipping recursive chown"
+          else
+            echo "[deploy] Normalizing Grafana data volume permissions (uid 472); current owner: $grafana_owner"
+            timed_run "grafana volume chown" docker run --rm \
+              -v bot-observability-grafana-data:/var/lib/grafana \
+              alpine:3.20 \
+              sh -c 'chown -R 472:472 /var/lib/grafana'
+          fi
+
+          current_grafana_hash=$(find "$RELEASE_PATH/grafana/provisioning" -type f -print0 2>/dev/null \
+          | sort -z \
+          | xargs -0 sha256sum \
+          | sha256sum \
+          | awk '{print $1}')
+          previous_grafana_hash=""
+          if [ -f "$GRAFANA_PROVISIONING_HASH_FILE" ]; then
+            previous_grafana_hash=$(cat "$GRAFANA_PROVISIONING_HASH_FILE" 2>/dev/null || true)
+          fi
+
+          recreate_grafana=0
+          if [ -z "$previous_grafana_hash" ] || [ "$current_grafana_hash" != "$previous_grafana_hash" ]; then
+            recreate_grafana=1
+          fi
           echo "[deploy] docker compose pull"
           timed_run "docker compose pull" docker compose pull
-          echo "[deploy] docker compose up (force recreate grafana to refresh dashboard bind mounts)"
-          timed_run "docker compose up grafana" docker compose up -d --remove-orphans --no-deps --force-recreate grafana
+          if [ "$recreate_grafana" -eq 1 ]; then
+            echo "[deploy] docker compose up (force recreate grafana; provisioning hash changed)"
+            timed_run "docker compose up grafana" docker compose up -d --remove-orphans --no-deps --force-recreate grafana
+            printf '%s' "$current_grafana_hash" > "$GRAFANA_PROVISIONING_HASH_FILE"
+          else
+            echo "[deploy] Grafana provisioning hash unchanged; skipping grafana force-recreate"
+          fi
           echo "[deploy] docker compose up (force recreate raw-feed-exporter to refresh exporter code bind mount)"
           timed_run "docker compose up raw-feed-exporter" docker compose up -d --remove-orphans --no-deps --force-recreate raw-feed-exporter
           echo "[deploy] docker compose up (all services)"
