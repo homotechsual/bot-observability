@@ -348,8 +348,14 @@ jobs:
           if [ -z "$previous_grafana_hash" ] || [ "$current_grafana_hash" != "$previous_grafana_hash" ]; then
             recreate_grafana=1
           fi
-          echo "[deploy] docker compose pull"
-          timed_run "docker compose pull" docker compose pull
+          echo "[deploy] docker compose pull (policy: missing)"
+          # Prefer pulling only missing images to avoid repeated registry checks on every deploy.
+          if docker compose pull --policy missing >/dev/null 2>&1; then
+            timed_run "docker compose pull (missing)" docker compose pull --policy missing
+          else
+            echo "[deploy] Compose pull policy flag unsupported; falling back to full pull"
+            timed_run "docker compose pull" docker compose pull
+          fi
           if [ "$recreate_grafana" -eq 1 ]; then
             echo "[deploy] docker compose up (force recreate grafana; provisioning hash changed)"
             timed_run "docker compose up grafana" docker compose up -d --remove-orphans --no-deps --force-recreate grafana
@@ -357,8 +363,10 @@ jobs:
           else
             echo "[deploy] Grafana provisioning hash unchanged; skipping grafana force-recreate"
           fi
-          echo "[deploy] docker compose up (force recreate raw-feed-exporter to refresh exporter code bind mount)"
-          timed_run "docker compose up raw-feed-exporter" docker compose up -d --remove-orphans --no-deps --force-recreate raw-feed-exporter
+          echo "[deploy] ensuring raw-feed-exporter exists"
+          timed_run "docker compose up raw-feed-exporter" docker compose up -d --no-deps raw-feed-exporter
+          echo "[deploy] restarting raw-feed-exporter to reload bind-mounted exporter code"
+          timed_run "docker compose restart raw-feed-exporter" docker compose restart raw-feed-exporter
           echo "[deploy] docker compose up (all services)"
           timed_run "docker compose up all" docker compose up -d --remove-orphans
           echo "[deploy] docker compose ps"
