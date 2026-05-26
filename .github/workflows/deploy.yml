@@ -107,6 +107,15 @@ jobs:
           cat > deploy-remote.sh << 'REMOTE_SCRIPT'
           set -eu
 
+          timed_run() {
+            label="$1"
+            shift
+            start_ts=$(date +%s)
+            "$@"
+            end_ts=$(date +%s)
+            echo "[deploy][timing] $label: $((end_ts - start_ts))s"
+          }
+
           TARGET_PATH="$1"
           RELEASE_PATH="$TARGET_PATH/current"
           BACKUP_PATH="$TARGET_PATH/backups"
@@ -184,7 +193,7 @@ jobs:
 
           HAS_BACKUP=0
           if [ -n "$(ls -A "$RELEASE_PATH" 2>/dev/null || true)" ]; then
-            tar -czf "$BACKUP_FILE" -C "$RELEASE_PATH" .
+            timed_run "release backup tar" tar -czf "$BACKUP_FILE" -C "$RELEASE_PATH" .
             HAS_BACKUP=1
 
             # Keep only the newest N release backups to avoid unbounded storage growth.
@@ -310,25 +319,26 @@ jobs:
           docker volume create bot-observability-kuma-data
           docker volume create bot-observability-prometheus-data
           echo "[deploy] Normalizing Grafana data volume permissions (uid 472)"
-          docker run --rm \
+          timed_run "grafana volume chown" docker run --rm \
             -v bot-observability-grafana-data:/var/lib/grafana \
             alpine:3.20 \
             sh -c 'chown -R 472:472 /var/lib/grafana'
           echo "[deploy] docker compose pull"
-          docker compose pull
+          timed_run "docker compose pull" docker compose pull
           echo "[deploy] docker compose up (force recreate grafana to refresh dashboard bind mounts)"
-          docker compose up -d --remove-orphans --no-deps --force-recreate grafana
+          timed_run "docker compose up grafana" docker compose up -d --remove-orphans --no-deps --force-recreate grafana
           echo "[deploy] docker compose up (all services)"
-          docker compose up -d --remove-orphans
+          timed_run "docker compose up all" docker compose up -d --remove-orphans
           echo "[deploy] docker compose ps"
-          docker compose ps
+          timed_run "docker compose ps" docker compose ps
           trap - ERR
-          docker image prune -f
+          timed_run "docker image prune" docker image prune -f
           REMOTE_SCRIPT
 
           echo "[deploy] Uploading deployment artifacts"
 
           SCP_ERR_FILE=$(mktemp)
+          SCP_START_TS=$(date +%s)
           if ! timeout 180s scp -P "$OBS_PORT" $SSH_OPTS \
             observability.tar.gz deploy-remote.sh deploy.sha \
             "$OBSERVABILITY_USER@$OBSERVABILITY_HOST:/tmp/" 2>"$SCP_ERR_FILE"; then
@@ -345,10 +355,13 @@ jobs:
             fi
           fi
           rm -f "$SCP_ERR_FILE"
+          SCP_END_TS=$(date +%s)
+          echo "[deploy][timing] scp upload artifacts: $((SCP_END_TS - SCP_START_TS))s"
 
           echo "[deploy] Executing remote deploy script"
 
           SSH_ERR_FILE=$(mktemp)
+          SSH_START_TS=$(date +%s)
           if ! timeout 45m ssh $SSH_AF_OPT -p "$OBS_PORT" $SSH_OPTS \
             "$OBSERVABILITY_USER@$OBSERVABILITY_HOST" "bash /tmp/deploy-remote.sh '${{ secrets.OBSERVABILITY_TARGET_PATH }}'" 2>"$SSH_ERR_FILE"; then
             if [ -z "$SSH_AF_OPT" ] && grep -qi "Network is unreachable" "$SSH_ERR_FILE"; then
@@ -363,6 +376,8 @@ jobs:
             fi
           fi
           rm -f "$SSH_ERR_FILE"
+          SSH_END_TS=$(date +%s)
+          echo "[deploy][timing] remote deploy script total: $((SSH_END_TS - SSH_START_TS))s"
 
           ssh $SSH_AF_OPT -p "$OBS_PORT" $SSH_OPTS -O exit "$OBSERVABILITY_USER@$OBSERVABILITY_HOST" >/dev/null 2>&1 || true
           rm -f deploy-remote.sh deploy.sha
