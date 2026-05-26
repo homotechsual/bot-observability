@@ -84,6 +84,65 @@ def read_url(url: str) -> str:
         return response.read().decode(content_type, errors="replace")
 
 
+def read_url_with_failure(url: str) -> tuple[Optional[str], Optional[dict[str, str]]]:
+    request = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": "bot-observability-raw-feed-exporter/1.0",
+            "Accept": "application/rss+xml, application/atom+xml, application/json, */*",
+        },
+    )
+
+    try:
+        with urllib.request.urlopen(request, timeout=TIMEOUT_SECONDS) as response:  # nosec B310
+            content_type = response.headers.get_content_charset() or "utf-8"
+            body = response.read().decode(content_type, errors="replace")
+            return body, None
+    except urllib.error.HTTPError as exc:
+        body = ""
+        try:
+            body = exc.read().decode("utf-8", errors="replace")
+        except Exception:
+            body = ""
+
+        return None, {
+            "stage": "fetch",
+            "reason": "http_error",
+            "status": str(exc.code),
+            "content_type": (exc.headers.get_content_type() if exc.headers else "").strip(),
+            "body_kind": classify_body_shape(body),
+        }
+    except urllib.error.URLError as exc:
+        return None, {
+            "stage": "fetch",
+            "reason": "url_error",
+            "status": "",
+            "content_type": "",
+            "body_kind": "",
+        }
+    except (TimeoutError, ValueError) as exc:
+        return None, {
+            "stage": "fetch",
+            "reason": exc.__class__.__name__.lower(),
+            "status": "",
+            "content_type": "",
+            "body_kind": "",
+        }
+
+
+def classify_body_shape(body: str) -> str:
+    text = body.lstrip().lower()
+    if not text:
+        return "empty"
+    if text.startswith("<!doctype html") or text.startswith("<html"):
+        return "html"
+    if text.startswith("<feed") or text.startswith("<rss"):
+        return "xml"
+    if text.startswith("{") or text.startswith("["):
+        return "json"
+    return "text"
+
+
 def first_text(element: ET.Element, names: list[str]) -> str:
     for name in names:
         node = element.find(name)
@@ -393,6 +452,8 @@ def scrape_metrics() -> str:
         "# TYPE raw_feed_scrape_success gauge",
         "# HELP raw_feed_last_scrape_unixtime Unix timestamp of the exporter scrape time.",
         "# TYPE raw_feed_last_scrape_unixtime gauge",
+        "# HELP raw_feed_youtube_first_failure_info First observed failure details for the YouTube scrape in the current scrape cycle.",
+        "# TYPE raw_feed_youtube_first_failure_info gauge",
         "# HELP raw_feed_youtube_discovered_channels Number of unique YouTube channel IDs discovered from bot SQLite databases.",
         "# TYPE raw_feed_youtube_discovered_channels gauge",
         "# HELP raw_feed_youtube_db_candidate_files Number of SQLite DB files considered for YouTube discovery.",
@@ -415,10 +476,18 @@ def scrape_metrics() -> str:
         parser = target["parser"]
         latest: Optional[dict[str, Any]] = None
         ok = 0
+        first_failure: Optional[dict[str, str]] = None
+        first_failure_url = ""
 
         for url in urls:
+            content, failure = read_url_with_failure(url)
+            if content is None:
+                if feed_name == "youtube" and first_failure is None:
+                    first_failure = failure or {}
+                    first_failure_url = url
+                continue
+
             try:
-                content = read_url(url)
                 parsed = parse_feed(url, content, parser)
                 if parsed and parsed.get("published"):
                     ok = 1
@@ -430,12 +499,41 @@ def scrape_metrics() -> str:
                     }
                     if latest is None or candidate["published"] > latest["published"]:
                         latest = candidate
-            except (urllib.error.URLError, TimeoutError, ValueError, json.JSONDecodeError, ET.ParseError):
-                continue
+                elif feed_name == "youtube" and first_failure is None:
+                    first_failure = {
+                        "stage": "parse",
+                        "reason": "no_published_item",
+                        "status": "",
+                        "content_type": "",
+                        "body_kind": classify_body_shape(content),
+                    }
+                    first_failure_url = url
+            except (json.JSONDecodeError, ET.ParseError) as exc:
+                if feed_name == "youtube" and first_failure is None:
+                    first_failure = {
+                        "stage": "parse",
+                        "reason": exc.__class__.__name__.lower(),
+                        "status": "",
+                        "content_type": "",
+                        "body_kind": classify_body_shape(content),
+                    }
+                    first_failure_url = url
 
         labels = f'feed="{feed_name}"'
         lines.append(f"raw_feed_scrape_success{{{labels}}} {ok}")
         lines.append(f"raw_feed_last_scrape_unixtime{{{labels}}} {scrape_time:.0f}")
+
+        if feed_name == "youtube" and first_failure:
+            failure_labels = [
+                'feed="youtube"',
+                f'url="{prometheus_escape(first_failure_url)}"',
+                f'stage="{prometheus_escape(first_failure.get("stage", ""))}"',
+                f'reason="{prometheus_escape(first_failure.get("reason", ""))}"',
+                f'status="{prometheus_escape(first_failure.get("status", ""))}"',
+                f'content_type="{prometheus_escape(first_failure.get("content_type", ""))}"',
+                f'body_kind="{prometheus_escape(first_failure.get("body_kind", ""))}"',
+            ]
+            lines.append(f"raw_feed_youtube_first_failure_info{{{','.join(failure_labels)}}} 1")
 
         if latest is None:
             continue
