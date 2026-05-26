@@ -327,6 +327,8 @@ jobs:
           timed_run "docker compose pull" docker compose pull
           echo "[deploy] docker compose up (force recreate grafana to refresh dashboard bind mounts)"
           timed_run "docker compose up grafana" docker compose up -d --remove-orphans --no-deps --force-recreate grafana
+          echo "[deploy] docker compose up (force recreate raw-feed-exporter to refresh exporter code bind mount)"
+          timed_run "docker compose up raw-feed-exporter" docker compose up -d --remove-orphans --no-deps --force-recreate raw-feed-exporter
           echo "[deploy] docker compose up (all services)"
           timed_run "docker compose up all" docker compose up -d --remove-orphans
           echo "[deploy] docker compose ps"

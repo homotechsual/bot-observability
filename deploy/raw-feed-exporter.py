@@ -506,8 +506,12 @@ def scrape_metrics() -> str:
         "# TYPE raw_feed_youtube_discovered_channels_by_source gauge",
         "# HELP raw_feed_youtube_db_candidate_files Number of SQLite DB files considered for YouTube discovery.",
         "# TYPE raw_feed_youtube_db_candidate_files gauge",
+        "# HELP raw_feed_youtube_db_candidate_files_by_source Number of SQLite DB files considered per source database path.",
+        "# TYPE raw_feed_youtube_db_candidate_files_by_source gauge",
         "# HELP raw_feed_youtube_db_readable_files Number of candidate SQLite DB files that exist and are readable by exporter.",
         "# TYPE raw_feed_youtube_db_readable_files gauge",
+        "# HELP raw_feed_youtube_db_readable_files_by_source Number of candidate SQLite DB files that are readable per source database path.",
+        "# TYPE raw_feed_youtube_db_readable_files_by_source gauge",
         "# HELP raw_feed_youtube_discovered_references Number of raw YouTube channel references found before normalization.",
         "# TYPE raw_feed_youtube_discovered_references gauge",
         "# HELP raw_feed_youtube_discovered_references_by_source Number of raw YouTube channel references found per source database before normalization.",
@@ -519,6 +523,16 @@ def scrape_metrics() -> str:
     lines.append(f"raw_feed_youtube_db_readable_files {len(db_readable)}")
     lines.append(f"raw_feed_youtube_discovered_references {len(youtube_references)}")
     lines.append(f"raw_feed_youtube_discovered_channels {len(youtube_channel_ids)}")
+
+    for source_name, db_path in source_db_paths().items():
+        source_candidates = candidate_db_paths_for_source(db_path)
+        source_readable = [path for path in source_candidates if os.path.exists(path)]
+        lines.append(
+            f'raw_feed_youtube_db_candidate_files_by_source{{source="{source_name}"}} {len(source_candidates)}'
+        )
+        lines.append(
+            f'raw_feed_youtube_db_readable_files_by_source{{source="{source_name}"}} {len(source_readable)}'
+        )
 
     for source_name, references in youtube_references_by_source.items():
         channel_ids = youtube_channel_ids_by_source.get(source_name, [])
