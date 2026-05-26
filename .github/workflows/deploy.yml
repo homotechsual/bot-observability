@@ -363,10 +363,15 @@ jobs:
           else
             echo "[deploy] Grafana provisioning hash unchanged; skipping grafana force-recreate"
           fi
-          echo "[deploy] ensuring raw-feed-exporter exists"
-          timed_run "docker compose up raw-feed-exporter" docker compose up -d --no-deps raw-feed-exporter
+          exporter_container_id=$(docker compose ps -q raw-feed-exporter || true)
+          if [ -z "$exporter_container_id" ]; then
+            echo "[deploy] raw-feed-exporter not present; creating service"
+            timed_run "docker compose up raw-feed-exporter" docker compose up -d --no-deps raw-feed-exporter
+          else
+            echo "[deploy] raw-feed-exporter already present; skipping compose up"
+          fi
           echo "[deploy] restarting raw-feed-exporter to reload bind-mounted exporter code"
-          timed_run "docker compose restart raw-feed-exporter" docker compose restart raw-feed-exporter
+          timed_run "docker compose restart raw-feed-exporter" docker compose restart -t 2 raw-feed-exporter
           echo "[deploy] docker compose up (all services)"
           timed_run "docker compose up all" docker compose up -d --remove-orphans
           echo "[deploy] docker compose ps"
