@@ -456,7 +456,14 @@
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
-          "mappings": [],
+          "mappings": [
+            {
+              "options": {
+                "0": { "text": "No source data yet" }
+              },
+              "type": "value"
+            }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -480,7 +487,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "raw_feed_latest_item_unixtime{feed=\"youtube\"}",
+          "expr": "raw_feed_latest_item_unixtime{feed=\"youtube\"} or on() vector(0)",
           "instant": true,
           "legendFormat": "{{item_title}}",
           "refId": "A"
@@ -494,7 +501,14 @@
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
-          "mappings": [],
+          "mappings": [
+            {
+              "options": {
+                "0": { "text": "No source data yet" }
+              },
+              "type": "value"
+            }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -518,7 +532,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "raw_feed_latest_item_unixtime{feed=\"halo_status\"}",
+          "expr": "raw_feed_latest_item_unixtime{feed=\"halo_status\"} or on() vector(0)",
           "instant": true,
           "legendFormat": "{{item_title}}",
           "refId": "A"
@@ -532,7 +546,14 @@
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
-          "mappings": [],
+          "mappings": [
+            {
+              "options": {
+                "0": { "text": "No source data yet" }
+              },
+              "type": "value"
+            }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -556,7 +577,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "raw_feed_latest_item_unixtime{feed=\"hudu_release\"}",
+          "expr": "raw_feed_latest_item_unixtime{feed=\"hudu_release\"} or on() vector(0)",
           "instant": true,
           "legendFormat": "{{item_title}}",
           "refId": "A"
@@ -595,7 +616,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "raw_feed_youtube_discovered_channels",
+          "expr": "raw_feed_youtube_discovered_channels or on() vector(0)",
           "instant": true,
           "refId": "A"
         }
@@ -641,7 +662,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "raw_feed_scrape_success{feed=\"youtube\"}",
+          "expr": "raw_feed_scrape_success{feed=\"youtube\"} or on() vector(0)",
           "instant": true,
           "refId": "A"
         }
