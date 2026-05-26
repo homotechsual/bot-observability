@@ -143,9 +143,13 @@ def classify_body_shape(body: str) -> str:
     return "text"
 
 
-def first_text(element: ET.Element, names: list[str]) -> str:
+def first_text(
+    element: ET.Element,
+    names: list[str],
+    namespaces: Optional[dict[str, str]] = None,
+) -> str:
     for name in names:
-        node = element.find(name)
+        node = element.find(name, namespaces or {})
         if node is not None and node.text:
             return node.text.strip()
     return ""
@@ -178,7 +182,7 @@ def parse_atom_latest(content: str) -> Optional[dict[str, Any]]:
     latest: Optional[dict[str, Any]] = None
 
     for entry in entries:
-        title = first_text(entry, ["atom:title", "title"])
+        title = first_text(entry, ["atom:title", "title"], ns)
 
         link = ""
         for node in entry.findall("atom:link", ns) + entry.findall("link"):
@@ -188,7 +192,11 @@ def parse_atom_latest(content: str) -> Optional[dict[str, Any]]:
                 link = href
                 break
 
-        date_text = first_text(entry, ["atom:published", "published", "atom:updated", "updated"])
+        date_text = first_text(
+            entry,
+            ["atom:published", "published", "atom:updated", "updated"],
+            ns,
+        )
         published = parse_datetime(date_text)
         if not published:
             continue
