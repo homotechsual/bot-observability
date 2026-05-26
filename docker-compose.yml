@@ -85,8 +85,8 @@ services:
       - RAW_FEED_CACHE_SECONDS=60
     volumes:
       - ./deploy/raw-feed-exporter.py:/app/raw-feed-exporter.py:ro
-      - ${HALO_DB_DIR:-.}:/db/halo:ro
-      - ${HUDU_DB_DIR:-.}:/db/hudu:ro
+      - ${HALO_DB_DIR:?HALO_DB_DIR must be set to host folder containing halocommunitybot.db}:/db/halo:ro
+      - ${HUDU_DB_DIR:?HUDU_DB_DIR must be set to host folder containing huducommunitybot.db}:/db/hudu:ro
 
 volumes:
   grafana-data:

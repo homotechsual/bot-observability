@@ -284,9 +284,7 @@ def build_youtube_urls() -> list[str]:
 
 
 def discovered_youtube_channel_ids() -> list[str]:
-    references: set[str] = set()
-    for db_path in candidate_db_paths():
-        references.update(query_channel_ids(db_path))
+    references = discovered_youtube_references()
 
     channel_ids: set[str] = set()
     for reference in references:
@@ -295,6 +293,13 @@ def discovered_youtube_channel_ids() -> list[str]:
             channel_ids.add(normalized)
 
     return sorted(channel_ids)
+
+
+def discovered_youtube_references() -> set[str]:
+    references: set[str] = set()
+    for db_path in candidate_db_paths():
+        references.update(query_channel_ids(db_path))
+    return references
 
 
 def candidate_db_paths() -> list[str]:
@@ -368,7 +373,17 @@ def resolve_channel_id_from_handle_url(url: str) -> Optional[str]:
 
 
 def scrape_metrics() -> str:
-    youtube_channel_ids = discovered_youtube_channel_ids()
+    db_candidates = candidate_db_paths()
+    db_readable = [path for path in db_candidates if os.path.exists(path)]
+    youtube_references = discovered_youtube_references()
+    youtube_channel_ids = sorted(
+        {
+            normalized
+            for reference in youtube_references
+            for normalized in [normalize_channel_id(reference)]
+            if normalized
+        }
+    )
     youtube_urls = build_youtube_urls()
 
     lines: list[str] = [
@@ -380,9 +395,18 @@ def scrape_metrics() -> str:
         "# TYPE raw_feed_last_scrape_unixtime gauge",
         "# HELP raw_feed_youtube_discovered_channels Number of unique YouTube channel IDs discovered from bot SQLite databases.",
         "# TYPE raw_feed_youtube_discovered_channels gauge",
+        "# HELP raw_feed_youtube_db_candidate_files Number of SQLite DB files considered for YouTube discovery.",
+        "# TYPE raw_feed_youtube_db_candidate_files gauge",
+        "# HELP raw_feed_youtube_db_readable_files Number of candidate SQLite DB files that exist and are readable by exporter.",
+        "# TYPE raw_feed_youtube_db_readable_files gauge",
+        "# HELP raw_feed_youtube_discovered_references Number of raw YouTube channel references found before normalization.",
+        "# TYPE raw_feed_youtube_discovered_references gauge",
     ]
 
     scrape_time = now_utc().timestamp()
+    lines.append(f"raw_feed_youtube_db_candidate_files {len(db_candidates)}")
+    lines.append(f"raw_feed_youtube_db_readable_files {len(db_readable)}")
+    lines.append(f"raw_feed_youtube_discovered_references {len(youtube_references)}")
     lines.append(f"raw_feed_youtube_discovered_channels {len(youtube_channel_ids)}")
 
     for target in feed_targets(youtube_urls):
