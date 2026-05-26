@@ -56,7 +56,8 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "expr": "sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"youtube\"} |= \"Posted YouTube video\" [30d]))",
-          "queryType": "range",
+          "instant": true,
+          "queryType": "instant",
           "refId": "A"
         }
       ],
@@ -93,7 +94,8 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "expr": "sum(count_over_time({service=\"hudu-bot\",component=\"hudu_release\"} |= \"Posted Hudu release update\" [30d]))",
-          "queryType": "range",
+          "instant": true,
+          "queryType": "instant",
           "refId": "A"
         }
       ],
@@ -130,7 +132,8 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "expr": "sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |= \"Posted Halo status update:\" [30d]))",
-          "queryType": "range",
+          "instant": true,
+          "queryType": "instant",
           "refId": "A"
         }
       ],
@@ -148,6 +151,7 @@
       "datasource": { "type": "loki", "uid": "loki" },
       "gridPos": { "h": 11, "w": 24, "x": 0, "y": 6 },
       "id": 6,
+      "timeFrom": "24h",
       "options": {
         "dedupStrategy": "none",
         "enableLogDetails": true,
@@ -173,6 +177,7 @@
       "datasource": { "type": "loki", "uid": "loki" },
       "gridPos": { "h": 11, "w": 12, "x": 0, "y": 17 },
       "id": 7,
+      "timeFrom": "24h",
       "options": {
         "dedupStrategy": "none",
         "enableLogDetails": true,
@@ -198,6 +203,7 @@
       "datasource": { "type": "loki", "uid": "loki" },
       "gridPos": { "h": 11, "w": 12, "x": 12, "y": 17 },
       "id": 8,
+      "timeFrom": "24h",
       "options": {
         "dedupStrategy": "none",
         "enableLogDetails": true,
@@ -230,6 +236,7 @@
       "datasource": { "type": "loki", "uid": "loki" },
       "gridPos": { "h": 11, "w": 12, "x": 0, "y": 29 },
       "id": 10,
+      "timeFrom": "24h",
       "options": {
         "dedupStrategy": "none",
         "enableLogDetails": true,
@@ -255,6 +262,7 @@
       "datasource": { "type": "loki", "uid": "loki" },
       "gridPos": { "h": 11, "w": 12, "x": 12, "y": 29 },
       "id": 11,
+      "timeFrom": "24h",
       "options": {
         "dedupStrategy": "none",
         "enableLogDetails": true,
@@ -313,7 +321,8 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "expr": "sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"youtube\"} |= \"Observed YouTube candidate video\" [30d])) - sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"youtube\"} |= \"Posted YouTube video\" [30d]))",
-          "queryType": "range",
+          "instant": true,
+          "queryType": "instant",
           "refId": "A"
         }
       ],
@@ -350,7 +359,8 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "expr": "sum(count_over_time({service=\"hudu-bot\",component=\"hudu_release\"} |= \"Observed Hudu release candidate\" [30d])) - sum(count_over_time({service=\"hudu-bot\",component=\"hudu_release\"} |= \"Posted Hudu release update\" [30d]))",
-          "queryType": "range",
+          "instant": true,
+          "queryType": "instant",
           "refId": "A"
         }
       ],
@@ -387,7 +397,8 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "expr": "sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |= \"Observed Halo status candidate\" [30d])) - sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |= \"Posted Halo status update\" [30d]))",
-          "queryType": "range",
+          "instant": true,
+          "queryType": "instant",
           "refId": "A"
         }
       ],
@@ -398,6 +409,7 @@
       "datasource": { "type": "loki", "uid": "loki" },
       "gridPos": { "h": 12, "w": 12, "x": 0, "y": 45 },
       "id": 16,
+      "timeFrom": "24h",
       "options": {
         "dedupStrategy": "none",
         "enableLogDetails": true,
@@ -423,6 +435,7 @@
       "datasource": { "type": "loki", "uid": "loki" },
       "gridPos": { "h": 12, "w": 12, "x": 12, "y": 45 },
       "id": 17,
+      "timeFrom": "24h",
       "options": {
         "dedupStrategy": "none",
         "enableLogDetails": true,
@@ -709,7 +722,7 @@
       "type": "stat"
     }
   ],
-  "refresh": "30s",
+  "refresh": "5m",
   "schemaVersion": 41,
   "tags": [
     "bots",
@@ -721,13 +734,13 @@
     "list": []
   },
   "time": {
-    "from": "now-5y",
+    "from": "now-30d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Feed Ingestion Audit",
   "uid": "bot-feed-ingestion-audit",
-  "version": 4,
+  "version": 5,
   "weekStart": ""
 }
