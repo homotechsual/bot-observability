@@ -262,6 +262,8 @@ jobs:
           HALO_LOG_PATH=${{ secrets.HALO_LOG_PATH }}
           PANDA_LOG_PATH=${{ secrets.PANDA_LOG_PATH }}
           HUDU_LOG_PATH=${{ secrets.HUDU_LOG_PATH }}
+          HALO_DB_DIR=${{ secrets.HALO_DB_DIR }}
+          HUDU_DB_DIR=${{ secrets.HUDU_DB_DIR }}
           KUMA_METRICS_API_KEY=${{ secrets.KUMA_METRICS_API_KEY }}
           ENVFILE
 
