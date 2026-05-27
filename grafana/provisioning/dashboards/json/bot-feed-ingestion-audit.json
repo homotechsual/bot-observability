@@ -93,7 +93,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "sum(count_over_time({service=\"hudu-bot\",component=\"hudu_release\"} |= \"Posted Hudu release update\" [30d]))",
+          "expr": "sum(count_over_time({service=\"hudu-bot\",component=\"hudu_release\"} |= \"Posted Hudu release update\" [30d])) or on() vector(0)",
           "instant": true,
           "queryType": "instant",
           "refId": "A"
