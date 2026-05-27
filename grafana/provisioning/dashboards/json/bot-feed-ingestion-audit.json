@@ -468,46 +468,114 @@
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
-          "mappings": [
-            {
-              "options": {
-                "0": { "text": "No source data yet" }
-              },
-              "type": "value"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              { "color": "green", "value": null }
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Bot"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "halo": {
+                        "text": "Halo"
+                      },
+                      "hudu": {
+                        "text": "Hudu"
+                      },
+                      "manual": {
+                        "text": "Manual"
+                      },
+                      "unknown": {
+                        "text": "Unknown"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
             ]
           },
-          "unit": "dateTimeAsIso"
-        },
-        "overrides": []
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Last Published"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsIso"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": { "h": 8, "w": 8, "x": 0, "y": 58 },
       "id": 19,
       "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "textMode": "value_and_name"
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Last Published"
+          }
+        ]
       },
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "(raw_feed_latest_item_unixtime{feed=\"youtube\"} * 1000) or on() vector(0)",
+          "expr": "raw_feed_latest_item_unixtime{feed=\"youtube\"}",
           "instant": true,
-          "legendFormat": "{{channel_display}}",
           "refId": "A"
         }
       ],
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "feed": true,
+              "item_title": true,
+              "source_url": true,
+              "__name__": true
+            },
+            "indexByName": {
+              "bot_source": 0,
+              "channel_display": 1,
+              "channel_id": 2,
+              "item_link": 3,
+              "Value": 4
+            },
+            "renameByName": {
+              "bot_source": "Bot",
+              "channel_display": "Channel",
+              "channel_id": "Channel ID",
+              "item_link": "Latest Video",
+              "Value": "Last Published"
+            }
+          }
+        }
+      ],
       "title": "YouTube Feed Last Published By Channel (Raw Feed)",
-      "type": "stat"
+      "type": "table"
     },
     {
       "datasource": { "type": "prometheus", "uid": "prometheus" },

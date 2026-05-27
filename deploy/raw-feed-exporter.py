@@ -376,17 +376,20 @@ def fetch_feed_endpoint_summary(source: str, endpoint: str) -> dict[str, Any]:
     return summary
 
 
-def build_youtube_urls() -> tuple[list[str], list[dict[str, Any]]]:
+def build_youtube_urls() -> tuple[list[str], list[dict[str, Any]], dict[str, str]]:
     """Build YouTube feed URLs from endpoint payloads plus manual fallback URLs."""
     urls = set(YOUTUBE_FEED_URLS)
+    source_by_url: dict[str, str] = {url: "manual" for url in YOUTUBE_FEED_URLS}
     summaries: list[dict[str, Any]] = []
 
     for source, endpoint in youtube_endpoint_targets():
         summary = fetch_feed_endpoint_summary(source, endpoint)
         summaries.append(summary)
         urls.update(summary["feed_urls"])
+        for url in summary["feed_urls"]:
+            source_by_url[url] = source
 
-    return sorted(urls), summaries
+    return sorted(urls), summaries, source_by_url
 
 
 def feed_targets(youtube_urls: list[str]) -> list[dict[str, Any]]:
@@ -411,7 +414,7 @@ def feed_targets(youtube_urls: list[str]) -> list[dict[str, Any]]:
 
 
 def scrape_metrics() -> str:
-    youtube_urls, endpoint_summaries = build_youtube_urls()
+    youtube_urls, endpoint_summaries, youtube_source_by_url = build_youtube_urls()
 
     lines: list[str] = [
         "# HELP raw_feed_latest_item_unixtime Unix timestamp of the latest published item by feed.",
@@ -541,8 +544,10 @@ def scrape_metrics() -> str:
 
         if feed_name == "youtube":
             for youtube_latest in latest_by_source_url.values():
+                bot_source = youtube_source_by_url.get(str(youtube_latest.get("source_url", "")), "unknown")
                 metric_labels = [
                     f'feed="{feed_name}"',
+                    f'bot_source="{prometheus_escape(bot_source)}"',
                     f'item_title="{prometheus_escape(youtube_latest["title"])}"',
                     f'item_link="{prometheus_escape(youtube_latest["link"])}"',
                     f'source_url="{prometheus_escape(youtube_latest["source_url"])}"',
