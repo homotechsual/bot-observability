@@ -21,3 +21,21 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets: ["bot-observability-raw-feed-exporter:9115"]
+
+  - job_name: halo-bot
+    scrape_interval: 30s
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["host.docker.internal:9091"]
+
+  - job_name: hudu-bot
+    scrape_interval: 30s
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["host.docker.internal:9092"]
+
+  - job_name: panda-bot
+    scrape_interval: 30s
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["host.docker.internal:9093"]

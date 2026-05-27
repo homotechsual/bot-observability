@@ -1,12 +1,10 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """Expose latest raw feed item metadata as Prometheus metrics."""
 
 from __future__ import annotations
 
 import json
 import os
-import re
-import sqlite3
 import time
 import urllib.error
 import urllib.request
@@ -29,15 +27,19 @@ YOUTUBE_FEED_URLS = [
     for value in os.getenv("YOUTUBE_FEED_URLS", "").split(",")
     if value.strip()
 ]
-HALO_DB_PATH = os.getenv("HALO_DB_PATH", "/db/halo/halocommunitybot.db").strip()
-HUDU_DB_PATH = os.getenv("HUDU_DB_PATH", "/db/hudu/huducommunitybot.db").strip()
+HALO_YOUTUBE_FEED_URLS_ENDPOINT = os.getenv(
+    "HALO_YOUTUBE_FEED_URLS_ENDPOINT",
+    "http://host.docker.internal:9191/observability/youtube-feed-urls",
+).strip()
+HUDU_YOUTUBE_FEED_URLS_ENDPOINT = os.getenv(
+    "HUDU_YOUTUBE_FEED_URLS_ENDPOINT",
+    "http://host.docker.internal:9192/observability/youtube-feed-urls",
+).strip()
 PORT = int(os.getenv("RAW_FEED_EXPORTER_PORT", "9115"))
 TIMEOUT_SECONDS = float(os.getenv("RAW_FEED_TIMEOUT_SECONDS", "20"))
 CACHE_SECONDS = float(os.getenv("RAW_FEED_CACHE_SECONDS", "60"))
 
 _CACHE: dict[str, Any] = {"expires_at": 0.0, "payload": ""}
-_HANDLE_CACHE: dict[str, str] = {}
-_CHANNEL_ID_RE = re.compile(r"\bUC[a-zA-Z0-9_-]{20,30}\b")
 
 
 def now_utc() -> datetime:
@@ -278,6 +280,44 @@ def prometheus_escape(value: str) -> str:
     return value.replace("\\", "\\\\").replace("\n", "\\n").replace('"', '\\"')
 
 
+def build_youtube_urls() -> list[str]:
+    """Build YouTube feed URL list from bot endpoint payloads plus manual fallback URLs."""
+    urls = set(YOUTUBE_FEED_URLS)
+
+    for endpoint in [HALO_YOUTUBE_FEED_URLS_ENDPOINT, HUDU_YOUTUBE_FEED_URLS_ENDPOINT]:
+        if not endpoint:
+            continue
+        urls.update(fetch_feed_urls_from_endpoint(endpoint))
+
+    return sorted(urls)
+
+
+def fetch_feed_urls_from_endpoint(endpoint: str) -> list[str]:
+    content, _ = read_url_with_failure(endpoint)
+    if content is None:
+        return []
+
+    try:
+        payload = json.loads(content)
+    except json.JSONDecodeError:
+        return []
+
+    raw_urls = payload.get("feedUrls") if isinstance(payload, dict) else None
+    if not isinstance(raw_urls, list):
+        return []
+
+    urls: list[str] = []
+    for value in raw_urls:
+        if not isinstance(value, str):
+            continue
+        trimmed = value.strip()
+        if not trimmed:
+            continue
+        urls.append(trimmed)
+
+    return urls
+
+
 def feed_targets(youtube_urls: list[str]) -> list[dict[str, Any]]:
 
     return [
@@ -299,204 +339,7 @@ def feed_targets(youtube_urls: list[str]) -> list[dict[str, Any]]:
     ]
 
 
-def query_channel_ids(db_path: str) -> list[str]:
-    if not db_path or not os.path.exists(db_path):
-        return []
-
-    ids: set[str] = set()
-    connection = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
-    try:
-        cursor = connection.cursor()
-        table_names = {row[0] for row in cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")}
-
-        if "YoutubeTrackedChannels" in table_names:
-            # Prefer enabled channels when schema supports it; otherwise include all rows.
-            columns = {row[1] for row in cursor.execute("PRAGMA table_info('YoutubeTrackedChannels')")}
-            if "IsEnabled" in columns:
-                rows = cursor.execute(
-                    "SELECT ChannelId FROM YoutubeTrackedChannels WHERE COALESCE(IsEnabled, 1) = 1"
-                )
-            else:
-                rows = cursor.execute("SELECT ChannelId FROM YoutubeTrackedChannels")
-
-            for row in rows:
-                value = str(row[0]).strip() if row and row[0] else ""
-                if value:
-                    ids.add(value)
-
-        # FeedPostStates is a useful fallback when tracked-channel rows are missing or stale.
-        if "FeedPostStates" in table_names:
-            rows = cursor.execute(
-                "SELECT SourceId FROM FeedPostStates WHERE FeedType = 'YouTube'"
-            )
-            for row in rows:
-                value = str(row[0]).strip() if row and row[0] else ""
-                if value:
-                    ids.add(value)
-    finally:
-        connection.close()
-
-    return sorted(ids)
-
-
-def build_youtube_urls() -> list[str]:
-    urls = set(YOUTUBE_FEED_URLS)
-
-    channel_ids = set(discovered_youtube_channel_ids())
-
-    for channel_id in channel_ids:
-        urls.add(f"https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}")
-
-    return sorted(urls)
-
-
-def candidate_db_paths_for_source(db_path: str) -> list[str]:
-    candidates: set[str] = set()
-
-    if db_path and os.path.exists(db_path):
-        candidates.add(db_path)
-
-    folder = os.path.dirname(db_path)
-    if folder and os.path.isdir(folder):
-        for name in os.listdir(folder):
-            if name.lower().endswith(".db"):
-                candidates.add(os.path.join(folder, name))
-
-    return sorted(candidates)
-
-
-def source_db_paths() -> dict[str, str]:
-    return {
-        "halo": HALO_DB_PATH,
-        "hudu": HUDU_DB_PATH,
-    }
-
-
-def discovered_youtube_references_by_source() -> dict[str, set[str]]:
-    references_by_source: dict[str, set[str]] = {}
-
-    for source_name, db_path in source_db_paths().items():
-        references: set[str] = set()
-        for path in candidate_db_paths_for_source(db_path):
-            references.update(query_channel_ids(path))
-        references_by_source[source_name] = references
-
-    return references_by_source
-
-
-def discovered_youtube_channel_ids_by_source() -> dict[str, list[str]]:
-    channel_ids_by_source: dict[str, list[str]] = {}
-
-    for source_name, references in discovered_youtube_references_by_source().items():
-        channel_ids: set[str] = set()
-        for reference in references:
-            normalized = normalize_channel_id(reference)
-            if normalized:
-                channel_ids.add(normalized)
-        channel_ids_by_source[source_name] = sorted(channel_ids)
-
-    return channel_ids_by_source
-
-
-def discovered_youtube_channel_ids() -> list[str]:
-    channel_ids: set[str] = set()
-    for source_channel_ids in discovered_youtube_channel_ids_by_source().values():
-        channel_ids.update(source_channel_ids)
-
-    return sorted(channel_ids)
-
-
-def discovered_youtube_references() -> set[str]:
-    references: set[str] = set()
-    for source_references in discovered_youtube_references_by_source().values():
-        references.update(source_references)
-    return references
-
-
-def candidate_db_paths() -> list[str]:
-    candidates: set[str] = set()
-    explicit_paths = [HALO_DB_PATH, HUDU_DB_PATH]
-
-    for path in explicit_paths:
-        if path and os.path.exists(path):
-            candidates.add(path)
-
-    # Fall back to scanning configured DB directories in case file names differ.
-    for path in explicit_paths:
-        folder = os.path.dirname(path)
-        if not folder or not os.path.isdir(folder):
-            continue
-        for name in os.listdir(folder):
-            if name.lower().endswith(".db"):
-                candidates.add(os.path.join(folder, name))
-
-    return sorted(candidates)
-
-
-def normalize_channel_id(reference: str) -> Optional[str]:
-    text = reference.strip()
-    if not text:
-        return None
-
-    if text.startswith("http"):
-        match = _CHANNEL_ID_RE.search(text)
-        if match:
-            return match.group(0)
-
-        # Handle URLs like https://www.youtube.com/@handle by resolving channelId from HTML.
-        if "youtube.com/@" in text:
-            return resolve_channel_id_from_handle_url(text)
-
-    if _CHANNEL_ID_RE.fullmatch(text):
-        return text
-
-    if text.startswith("@"):
-        return resolve_channel_id_from_handle_url(f"https://www.youtube.com/{text}")
-
-    return None
-
-
-def resolve_channel_id_from_handle_url(url: str) -> Optional[str]:
-    cached = _HANDLE_CACHE.get(url)
-    if cached:
-        return cached
-
-    try:
-        request = urllib.request.Request(
-            url,
-            headers={
-                "User-Agent": "bot-observability-raw-feed-exporter/1.0",
-                "Accept": "text/html,application/xhtml+xml",
-            },
-        )
-        with urllib.request.urlopen(request, timeout=TIMEOUT_SECONDS) as response:  # nosec B310
-            body = response.read().decode("utf-8", errors="replace")
-    except (urllib.error.URLError, TimeoutError, ValueError):
-        return None
-
-    match = _CHANNEL_ID_RE.search(body)
-    if not match:
-        return None
-
-    channel_id = match.group(0)
-    _HANDLE_CACHE[url] = channel_id
-    return channel_id
-
-
 def scrape_metrics() -> str:
-    db_candidates = candidate_db_paths()
-    db_readable = [path for path in db_candidates if os.path.exists(path)]
-    youtube_references = discovered_youtube_references()
-    youtube_references_by_source = discovered_youtube_references_by_source()
-    youtube_channel_ids_by_source = discovered_youtube_channel_ids_by_source()
-    youtube_channel_ids = sorted(
-        {
-            normalized
-            for reference in youtube_references
-            for normalized in [normalize_channel_id(reference)]
-            if normalized
-        }
-    )
     youtube_urls = build_youtube_urls()
 
     lines: list[str] = [
@@ -508,48 +351,9 @@ def scrape_metrics() -> str:
         "# TYPE raw_feed_last_scrape_unixtime gauge",
         "# HELP raw_feed_youtube_first_failure_info First observed failure details for the YouTube scrape in the current scrape cycle.",
         "# TYPE raw_feed_youtube_first_failure_info gauge",
-        "# HELP raw_feed_youtube_discovered_channels Number of unique YouTube channel IDs discovered from bot SQLite databases.",
-        "# TYPE raw_feed_youtube_discovered_channels gauge",
-        "# HELP raw_feed_youtube_discovered_channels_by_source Number of unique YouTube channel IDs discovered per source database.",
-        "# TYPE raw_feed_youtube_discovered_channels_by_source gauge",
-        "# HELP raw_feed_youtube_db_candidate_files Number of SQLite DB files considered for YouTube discovery.",
-        "# TYPE raw_feed_youtube_db_candidate_files gauge",
-        "# HELP raw_feed_youtube_db_candidate_files_by_source Number of SQLite DB files considered per source database path.",
-        "# TYPE raw_feed_youtube_db_candidate_files_by_source gauge",
-        "# HELP raw_feed_youtube_db_readable_files Number of candidate SQLite DB files that exist and are readable by exporter.",
-        "# TYPE raw_feed_youtube_db_readable_files gauge",
-        "# HELP raw_feed_youtube_db_readable_files_by_source Number of candidate SQLite DB files that are readable per source database path.",
-        "# TYPE raw_feed_youtube_db_readable_files_by_source gauge",
-        "# HELP raw_feed_youtube_discovered_references Number of raw YouTube channel references found before normalization.",
-        "# TYPE raw_feed_youtube_discovered_references gauge",
-        "# HELP raw_feed_youtube_discovered_references_by_source Number of raw YouTube channel references found per source database before normalization.",
-        "# TYPE raw_feed_youtube_discovered_references_by_source gauge",
     ]
 
     scrape_time = now_utc().timestamp()
-    lines.append(f"raw_feed_youtube_db_candidate_files {len(db_candidates)}")
-    lines.append(f"raw_feed_youtube_db_readable_files {len(db_readable)}")
-    lines.append(f"raw_feed_youtube_discovered_references {len(youtube_references)}")
-    lines.append(f"raw_feed_youtube_discovered_channels {len(youtube_channel_ids)}")
-
-    for source_name, db_path in source_db_paths().items():
-        source_candidates = candidate_db_paths_for_source(db_path)
-        source_readable = [path for path in source_candidates if os.path.exists(path)]
-        lines.append(
-            f'raw_feed_youtube_db_candidate_files_by_source{{source="{source_name}"}} {len(source_candidates)}'
-        )
-        lines.append(
-            f'raw_feed_youtube_db_readable_files_by_source{{source="{source_name}"}} {len(source_readable)}'
-        )
-
-    for source_name, references in youtube_references_by_source.items():
-        channel_ids = youtube_channel_ids_by_source.get(source_name, [])
-        lines.append(
-            f'raw_feed_youtube_discovered_references_by_source{{source="{source_name}"}} {len(references)}'
-        )
-        lines.append(
-            f'raw_feed_youtube_discovered_channels_by_source{{source="{source_name}"}} {len(channel_ids)}'
-        )
 
     for target in feed_targets(youtube_urls):
         feed_name = target["feed"]
