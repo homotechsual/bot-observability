@@ -466,6 +466,7 @@ def scrape_metrics() -> str:
         urls = target["urls"]
         parser = target["parser"]
         latest: Optional[dict[str, Any]] = None
+        latest_by_source_url: dict[str, dict[str, Any]] = {}
         ok = 0
         first_failure: Optional[dict[str, str]] = None
         first_failure_url = ""
@@ -497,6 +498,9 @@ def scrape_metrics() -> str:
                         "channel_id": channel_id,
                         "channel_display": channel_display,
                     }
+
+                    latest_by_source_url[url] = candidate
+
                     if latest is None or candidate["published"] > latest["published"]:
                         latest = candidate
                 elif feed_name == "youtube" and first_failure is None:
@@ -535,6 +539,24 @@ def scrape_metrics() -> str:
             ]
             lines.append(f"raw_feed_youtube_first_failure_info{{{','.join(failure_labels)}}} 1")
 
+        if feed_name == "youtube":
+            for youtube_latest in latest_by_source_url.values():
+                metric_labels = [
+                    f'feed="{feed_name}"',
+                    f'item_title="{prometheus_escape(youtube_latest["title"])}"',
+                    f'item_link="{prometheus_escape(youtube_latest["link"])}"',
+                    f'source_url="{prometheus_escape(youtube_latest["source_url"])}"',
+                    f'channel_name="{prometheus_escape(str(youtube_latest.get("channel_name", "")))}"',
+                    f'channel_id="{prometheus_escape(str(youtube_latest.get("channel_id", "")))}"',
+                    f'channel_display="{prometheus_escape(str(youtube_latest.get("channel_display", "")))}"',
+                ]
+
+                lines.append(
+                    f"raw_feed_latest_item_unixtime{{{','.join(metric_labels)}}} {youtube_latest['published'].timestamp():.0f}"
+                )
+
+            continue
+
         if latest is None:
             continue
 
@@ -544,11 +566,6 @@ def scrape_metrics() -> str:
             f'item_link="{prometheus_escape(latest["link"])}"',
             f'source_url="{prometheus_escape(latest["source_url"])}"',
         ]
-        if feed_name == "youtube":
-            metric_labels.append(f'channel_name="{prometheus_escape(str(latest.get("channel_name", "")))}"')
-            metric_labels.append(f'channel_id="{prometheus_escape(str(latest.get("channel_id", "")))}"')
-            metric_labels.append(f'channel_display="{prometheus_escape(str(latest.get("channel_display", "")))}"')
-
         lines.append(
             f"raw_feed_latest_item_unixtime{{{','.join(metric_labels)}}} {latest['published'].timestamp():.0f}"
         )
