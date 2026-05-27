@@ -42,6 +42,13 @@ CACHE_SECONDS = float(os.getenv("RAW_FEED_CACHE_SECONDS", "60"))
 _CACHE: dict[str, Any] = {"expires_at": 0.0, "payload": ""}
 
 
+def youtube_endpoint_targets() -> list[tuple[str, str]]:
+    return [
+        ("halo", HALO_YOUTUBE_FEED_URLS_ENDPOINT),
+        ("hudu", HUDU_YOUTUBE_FEED_URLS_ENDPOINT),
+    ]
+
+
 def now_utc() -> datetime:
     return datetime.now(timezone.utc)
 
@@ -280,42 +287,65 @@ def prometheus_escape(value: str) -> str:
     return value.replace("\\", "\\\\").replace("\n", "\\n").replace('"', '\\"')
 
 
-def build_youtube_urls() -> list[str]:
-    """Build YouTube feed URL list from bot endpoint payloads plus manual fallback URLs."""
-    urls = set(YOUTUBE_FEED_URLS)
+def fetch_feed_endpoint_summary(source: str, endpoint: str) -> dict[str, Any]:
+    summary: dict[str, Any] = {
+        "source": source,
+        "endpoint": endpoint,
+        "success": 0,
+        "configured_channel_count": 0,
+        "discovered_feed_urls": 0,
+        "unresolved_references": 0,
+        "feed_urls": [],
+    }
 
-    for endpoint in [HALO_YOUTUBE_FEED_URLS_ENDPOINT, HUDU_YOUTUBE_FEED_URLS_ENDPOINT]:
-        if not endpoint:
-            continue
-        urls.update(fetch_feed_urls_from_endpoint(endpoint))
+    if not endpoint:
+        return summary
 
-    return sorted(urls)
-
-
-def fetch_feed_urls_from_endpoint(endpoint: str) -> list[str]:
     content, _ = read_url_with_failure(endpoint)
     if content is None:
-        return []
+        return summary
 
     try:
         payload = json.loads(content)
     except json.JSONDecodeError:
-        return []
+        return summary
 
-    raw_urls = payload.get("feedUrls") if isinstance(payload, dict) else None
-    if not isinstance(raw_urls, list):
-        return []
+    if not isinstance(payload, dict):
+        return summary
 
-    urls: list[str] = []
-    for value in raw_urls:
-        if not isinstance(value, str):
-            continue
-        trimmed = value.strip()
-        if not trimmed:
-            continue
-        urls.append(trimmed)
+    raw_urls = payload.get("feedUrls")
+    if isinstance(raw_urls, list):
+        for value in raw_urls:
+            if not isinstance(value, str):
+                continue
+            trimmed = value.strip()
+            if trimmed:
+                summary["feed_urls"].append(trimmed)
 
-    return urls
+    raw_configured = payload.get("configuredChannelCount", 0)
+    if isinstance(raw_configured, int):
+        summary["configured_channel_count"] = max(raw_configured, 0)
+
+    raw_unresolved = payload.get("unresolvedReferences")
+    if isinstance(raw_unresolved, list):
+        summary["unresolved_references"] = len([x for x in raw_unresolved if isinstance(x, str) and x.strip()])
+
+    summary["discovered_feed_urls"] = len(summary["feed_urls"])
+    summary["success"] = 1
+    return summary
+
+
+def build_youtube_urls() -> tuple[list[str], list[dict[str, Any]]]:
+    """Build YouTube feed URLs from endpoint payloads plus manual fallback URLs."""
+    urls = set(YOUTUBE_FEED_URLS)
+    summaries: list[dict[str, Any]] = []
+
+    for source, endpoint in youtube_endpoint_targets():
+        summary = fetch_feed_endpoint_summary(source, endpoint)
+        summaries.append(summary)
+        urls.update(summary["feed_urls"])
+
+    return sorted(urls), summaries
 
 
 def feed_targets(youtube_urls: list[str]) -> list[dict[str, Any]]:
@@ -340,7 +370,7 @@ def feed_targets(youtube_urls: list[str]) -> list[dict[str, Any]]:
 
 
 def scrape_metrics() -> str:
-    youtube_urls = build_youtube_urls()
+    youtube_urls, endpoint_summaries = build_youtube_urls()
 
     lines: list[str] = [
         "# HELP raw_feed_latest_item_unixtime Unix timestamp of the latest published item by feed.",
@@ -351,9 +381,44 @@ def scrape_metrics() -> str:
         "# TYPE raw_feed_last_scrape_unixtime gauge",
         "# HELP raw_feed_youtube_first_failure_info First observed failure details for the YouTube scrape in the current scrape cycle.",
         "# TYPE raw_feed_youtube_first_failure_info gauge",
+        "# HELP raw_feed_youtube_discovered_channels_by_source Number of enabled YouTube channel references reported by each bot endpoint.",
+        "# TYPE raw_feed_youtube_discovered_channels_by_source gauge",
+        "# HELP raw_feed_youtube_endpoint_discovered_feed_urls_by_source Number of YouTube feed URLs exposed by each bot endpoint.",
+        "# TYPE raw_feed_youtube_endpoint_discovered_feed_urls_by_source gauge",
+        "# HELP raw_feed_youtube_endpoint_unresolved_references_by_source Number of unresolved YouTube references reported by each bot endpoint.",
+        "# TYPE raw_feed_youtube_endpoint_unresolved_references_by_source gauge",
+        "# HELP raw_feed_youtube_endpoint_scrape_success 1 when endpoint payload was fetched and parsed successfully, per source endpoint.",
+        "# TYPE raw_feed_youtube_endpoint_scrape_success gauge",
+        "# HELP raw_feed_youtube_discovered_feed_urls_total Total unique YouTube feed URLs considered for scraping this cycle.",
+        "# TYPE raw_feed_youtube_discovered_feed_urls_total gauge",
+        "# HELP raw_feed_youtube_manual_fallback_feed_urls Number of manually configured fallback YouTube feed URLs.",
+        "# TYPE raw_feed_youtube_manual_fallback_feed_urls gauge",
     ]
 
     scrape_time = now_utc().timestamp()
+    lines.append(f"raw_feed_youtube_discovered_feed_urls_total {len(youtube_urls)}")
+    lines.append(f"raw_feed_youtube_manual_fallback_feed_urls {len(YOUTUBE_FEED_URLS)}")
+
+    for summary in endpoint_summaries:
+        source = summary["source"]
+        endpoint = summary["endpoint"]
+        success = int(summary["success"])
+        configured_channel_count = int(summary["configured_channel_count"])
+        discovered_feed_urls = int(summary["discovered_feed_urls"])
+        unresolved_references = int(summary["unresolved_references"])
+
+        lines.append(
+            f'raw_feed_youtube_endpoint_scrape_success{{source="{source}",endpoint="{prometheus_escape(endpoint)}"}} {success}'
+        )
+        lines.append(
+            f'raw_feed_youtube_discovered_channels_by_source{{source="{source}"}} {configured_channel_count}'
+        )
+        lines.append(
+            f'raw_feed_youtube_endpoint_discovered_feed_urls_by_source{{source="{source}"}} {discovered_feed_urls}'
+        )
+        lines.append(
+            f'raw_feed_youtube_endpoint_unresolved_references_by_source{{source="{source}"}} {unresolved_references}'
+        )
 
     for target in feed_targets(youtube_urls):
         feed_name = target["feed"]

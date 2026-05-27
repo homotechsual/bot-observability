@@ -20,8 +20,6 @@ jobs:
           HALO_LOG_PATH: /tmp/halo-logs
           PANDA_LOG_PATH: /tmp/panda-logs
           HUDU_LOG_PATH: /tmp/hudu-logs
-          HALO_DB_DIR: /tmp/halo-db
-          HUDU_DB_DIR: /tmp/hudu-db
         run: docker compose -f docker-compose.yml config >/dev/null
 
       - name: Validate dashboard JSON files

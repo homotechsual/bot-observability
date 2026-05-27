@@ -19,7 +19,9 @@ Shared observability stack for both bots without SSHing into servers.
 4. If Uptime Kuma metrics auth is enabled, set `KUMA_METRICS_API_KEY`.
 5. Optionally set `YOUTUBE_FEED_URLS` (comma-separated raw YouTube feed URLs) for raw-source latest-item cards.
 6. Optionally override `HALO_STATUS_FEED_URL` / `HUDU_RELEASE_FEED_URL` if your source endpoints differ.
-7. For runtime-managed YouTube channels, set `HALO_DB_DIR` and `HUDU_DB_DIR` to the actual bot DB folders so the exporter can read bot SQLite `YoutubeTrackedChannels`.
+7. Ensure bot feed URL endpoints are reachable from the observability host (defaults):
+   * `HALO_YOUTUBE_FEED_URLS_ENDPOINT=http://host.docker.internal:9191/observability/youtube-feed-urls`
+   * `HUDU_YOUTUBE_FEED_URLS_ENDPOINT=http://host.docker.internal:9192/observability/youtube-feed-urls`
 8. Create Prometheus auth file from that key:
 
 ```powershell
@@ -53,7 +55,7 @@ A second dashboard named `Feed Ingestion Audit` is also auto-provisioned for fee
 * Halo status posted events across Halo + Hudu bots
 * 24h stat cards for quick "is ingestion happening" verification
 * Last source feed activity cards backed by raw feed endpoints via Prometheus
-* YouTube channel discovery health card (count from bot SQLite DB)
+* YouTube channel configuration health card (count from bot endpoint payload)
 * YouTube raw feed scrape health card (OK/Failed)
 
 ## Dashboard Development & Validation
@@ -170,10 +172,8 @@ Configure these repository secrets before first deployment:
 * `YOUTUBE_FEED_URLS`: optional comma-separated raw YouTube feed URLs for source-level latest-item metrics
 * `HALO_STATUS_FEED_URL`: optional override for Halo status RSS URL used by raw feed exporter
 * `HUDU_RELEASE_FEED_URL`: optional override for Hudu releases JSON URL used by raw feed exporter
-* `HALO_DB_DIR`: absolute directory containing Halo bot SQLite DB (required for DB-driven YouTube discovery)
-* `HALO_DB_FILE`: optional Halo SQLite filename (default: `halocommunitybot.db`)
-* `HUDU_DB_DIR`: absolute directory containing Hudu bot SQLite DB (required for DB-driven YouTube discovery)
-* `HUDU_DB_FILE`: optional Hudu SQLite filename (default: `huducommunitybot.db`)
+* `HALO_YOUTUBE_FEED_URLS_ENDPOINT`: optional override for Halo bot endpoint that returns runtime YouTube feed URLs
+* `HUDU_YOUTUBE_FEED_URLS_ENDPOINT`: optional override for Hudu bot endpoint that returns runtime YouTube feed URLs
 
 Deployment behavior:
 

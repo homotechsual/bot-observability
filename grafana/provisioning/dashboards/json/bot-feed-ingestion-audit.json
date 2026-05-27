@@ -634,7 +634,7 @@
           "refId": "A"
         }
       ],
-      "title": "Halo YouTube Channels Discovered (Bot DB)",
+      "title": "Halo YouTube Channels Configured (Bot Endpoint)",
       "type": "stat"
     },
     {
@@ -672,7 +672,7 @@
           "refId": "A"
         }
       ],
-      "title": "Hudu YouTube Channels Discovered (Bot DB)",
+      "title": "Hudu YouTube Channels Configured (Bot Endpoint)",
       "type": "stat"
     },
     {
