@@ -55,7 +55,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"youtube\"} |= \"Posted YouTube video\" [30d])) or on() vector(0)",
+          "expr": "sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"youtube\"} |= \"Posted YouTube video\" [7d])) or on() vector(0)",
           "instant": true,
           "queryType": "instant",
           "refId": "A"
@@ -93,7 +93,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "sum(count_over_time({service=\"hudu-bot\",component=\"hudu_release\"} |= \"Posted Hudu release update\" [30d])) or on() vector(0)",
+          "expr": "sum(count_over_time({service=\"hudu-bot\",component=\"hudu_release\"} |= \"Posted Hudu release update\" [7d])) or on() vector(0)",
           "instant": true,
           "queryType": "instant",
           "refId": "A"
@@ -131,7 +131,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |= \"Posted Halo status update:\" [30d])) or on() vector(0)",
+          "expr": "sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |= \"Posted Halo status update:\" [7d])) or on() vector(0)",
           "instant": true,
           "queryType": "instant",
           "refId": "A"
@@ -320,7 +320,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"youtube\"} |= \"Observed YouTube candidate video\" [30d])) - sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"youtube\"} |= \"Posted YouTube video\" [30d]))",
+          "expr": "sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"youtube\"} |= \"Observed YouTube candidate video\" [7d])) - sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"youtube\"} |= \"Posted YouTube video\" [7d]))",
           "instant": true,
           "queryType": "instant",
           "refId": "A"
@@ -358,7 +358,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "sum(count_over_time({service=\"hudu-bot\",component=\"hudu_release\"} |= \"Observed Hudu release candidate\" [30d])) - sum(count_over_time({service=\"hudu-bot\",component=\"hudu_release\"} |= \"Posted Hudu release update\" [30d]))",
+          "expr": "sum(count_over_time({service=\"hudu-bot\",component=\"hudu_release\"} |= \"Observed Hudu release candidate\" [7d])) - sum(count_over_time({service=\"hudu-bot\",component=\"hudu_release\"} |= \"Posted Hudu release update\" [7d]))",
           "instant": true,
           "queryType": "instant",
           "refId": "A"
@@ -396,7 +396,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |= \"Observed Halo status candidate\" [30d])) - sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |= \"Posted Halo status update\" [30d]))",
+          "expr": "sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |= \"Observed Halo status candidate\" [7d])) - sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"halo_status\"} |= \"Posted Halo status update\" [7d]))",
           "instant": true,
           "queryType": "instant",
           "refId": "A"
@@ -889,7 +889,7 @@
     "list": []
   },
   "time": {
-    "from": "now-30d",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {},
