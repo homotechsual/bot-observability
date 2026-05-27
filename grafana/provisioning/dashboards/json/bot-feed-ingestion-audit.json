@@ -502,11 +502,11 @@
           "datasource": { "type": "prometheus", "uid": "prometheus" },
           "expr": "(raw_feed_latest_item_unixtime{feed=\"youtube\"} * 1000) or on() vector(0)",
           "instant": true,
-          "legendFormat": "{{item_title}}",
+          "legendFormat": "{{channel_display}}",
           "refId": "A"
         }
       ],
-      "title": "YouTube Feed Last Published (Raw Feed)",
+      "title": "YouTube Feed Last Published By Channel (Raw Feed)",
       "type": "stat"
     },
     {

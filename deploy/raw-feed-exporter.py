@@ -193,6 +193,10 @@ def parse_atom_latest(content: str) -> Optional[dict[str, Any]]:
     for entry in entries:
         title = first_text(entry, ["atom:title", "title"], ns)
 
+        channel_name = first_text(entry, ["atom:author/atom:name", "author/name"], ns)
+        channel_uri = first_text(entry, ["atom:author/atom:uri", "author/uri"], ns)
+        channel_id = extract_youtube_channel_id(channel_uri)
+
         link = ""
         for node in entry.findall("atom:link", ns) + entry.findall("link"):
             href = (node.attrib.get("href") or "").strip()
@@ -210,7 +214,13 @@ def parse_atom_latest(content: str) -> Optional[dict[str, Any]]:
         if not published:
             continue
 
-        candidate = {"title": title, "link": link, "published": published}
+        candidate = {
+            "title": title,
+            "link": link,
+            "published": published,
+            "channel_name": channel_name,
+            "channel_id": channel_id,
+        }
         if latest is None or published > latest["published"]:
             latest = candidate
 
@@ -266,6 +276,37 @@ def parse_hudu_release_latest(content: str) -> Optional[dict[str, Any]]:
             latest = candidate
 
     return latest
+
+
+def extract_youtube_channel_id(value: str) -> str:
+    text = (value or "").strip()
+    if not text:
+        return ""
+
+    if "channel_id=" in text:
+        marker = text.split("channel_id=", 1)[1]
+        return marker.split("&", 1)[0].strip()
+
+    if "youtube.com/channel/" in text:
+        marker = text.split("youtube.com/channel/", 1)[1]
+        return marker.split("/", 1)[0].split("?", 1)[0].strip()
+
+    return ""
+
+
+def derive_channel_metadata(parsed: dict[str, Any], source_url: str) -> tuple[str, str, str]:
+    channel_name = str(parsed.get("channel_name", "") or "").strip()
+    channel_id = str(parsed.get("channel_id", "") or "").strip()
+
+    if not channel_id:
+        channel_id = extract_youtube_channel_id(source_url)
+
+    if channel_name:
+        channel_display = channel_name if not channel_id else f"{channel_name} ({channel_id})"
+    else:
+        channel_display = channel_id or source_url
+
+    return channel_name, channel_id, channel_display
 
 
 def parse_feed(url: str, content: str, parser_hint: str) -> Optional[dict[str, Any]]:
@@ -441,11 +482,20 @@ def scrape_metrics() -> str:
                 parsed = parse_feed(url, content, parser)
                 if parsed and parsed.get("published"):
                     ok = 1
+                    channel_name = ""
+                    channel_id = ""
+                    channel_display = ""
+                    if feed_name == "youtube":
+                        channel_name, channel_id, channel_display = derive_channel_metadata(parsed, url)
+
                     candidate = {
                         "published": parsed["published"],
                         "title": str(parsed.get("title", "")).strip(),
                         "link": str(parsed.get("link", "")).strip(),
                         "source_url": url,
+                        "channel_name": channel_name,
+                        "channel_id": channel_id,
+                        "channel_display": channel_display,
                     }
                     if latest is None or candidate["published"] > latest["published"]:
                         latest = candidate
@@ -494,6 +544,11 @@ def scrape_metrics() -> str:
             f'item_link="{prometheus_escape(latest["link"])}"',
             f'source_url="{prometheus_escape(latest["source_url"])}"',
         ]
+        if feed_name == "youtube":
+            metric_labels.append(f'channel_name="{prometheus_escape(str(latest.get("channel_name", "")))}"')
+            metric_labels.append(f'channel_id="{prometheus_escape(str(latest.get("channel_id", "")))}"')
+            metric_labels.append(f'channel_display="{prometheus_escape(str(latest.get("channel_display", "")))}"')
+
         lines.append(
             f"raw_feed_latest_item_unixtime{{{','.join(metric_labels)}}} {latest['published'].timestamp():.0f}"
         )
