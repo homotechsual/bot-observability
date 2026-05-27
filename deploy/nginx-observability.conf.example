@@ -8,7 +8,8 @@ server {
 }
 
 server {
-    listen 443 ssl http2;
+    listen 443 ssl;
+    http2 on;
     server_name grafana.example.com;
 
     ssl_certificate /etc/letsencrypt/live/grafana.example.com/fullchain.pem;
@@ -27,7 +28,8 @@ server {
 }
 
 server {
-    listen 443 ssl http2;
+    listen 443 ssl;
+    http2 on;
     server_name kuma.example.com;
 
     ssl_certificate /etc/letsencrypt/live/kuma.example.com/fullchain.pem;

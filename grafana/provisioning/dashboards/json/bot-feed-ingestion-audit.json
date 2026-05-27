@@ -521,7 +521,7 @@
           }
         ]
       },
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 58 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 58 },
       "id": 19,
       "options": {
         "showHeader": true,
@@ -600,7 +600,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 58 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 66 },
       "id": 20,
       "options": {
         "colorMode": "none",
@@ -645,7 +645,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 58 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 66 },
       "id": 21,
       "options": {
         "colorMode": "none",
@@ -684,7 +684,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 66 },
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 74 },
       "id": 22,
       "options": {
         "colorMode": "background",
@@ -722,7 +722,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 66 },
+      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 74 },
       "id": 24,
       "options": {
         "colorMode": "background",
@@ -768,7 +768,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 66 },
+      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 74 },
       "id": 23,
       "options": {
         "colorMode": "background",
@@ -814,7 +814,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 12, "x": 0, "y": 70 },
+      "gridPos": { "h": 4, "w": 12, "x": 0, "y": 78 },
       "id": 25,
       "options": {
         "colorMode": "background",
@@ -854,7 +854,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 12, "x": 12, "y": 70 },
+      "gridPos": { "h": 4, "w": 12, "x": 12, "y": 78 },
       "id": 26,
       "options": {
         "colorMode": "background",
