@@ -107,6 +107,8 @@ services:
     mem_limit: 128m
     volumes:
       - ./deploy/raw-feed-exporter.py:/app/raw-feed-exporter.py:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 volumes:
   grafana-data:
