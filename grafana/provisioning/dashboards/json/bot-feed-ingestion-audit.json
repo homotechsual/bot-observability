@@ -518,6 +518,24 @@
                 "value": "dateTimeAsIso"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Latest Video"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Open video",
+                    "url": "${__value.text}"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -535,7 +553,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "raw_feed_latest_item_unixtime{feed=\"youtube\"}",
+          "expr": "(raw_feed_latest_item_unixtime{feed=\"youtube\"} * 1000)",
           "instant": true,
           "refId": "A"
         }
@@ -546,6 +564,10 @@
           "options": {
             "mode": "columns"
           }
+        },
+        {
+          "id": "merge",
+          "options": {}
         },
         {
           "id": "organize",
