@@ -604,6 +604,13 @@
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Open last incident",
+              "url": "${__field.labels.item_link}"
+            }
+          ],
           "mappings": [
             {
               "options": {
@@ -649,6 +656,13 @@
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Open feed URL",
+              "url": "${__field.labels.source_url}"
+            }
+          ],
           "mappings": [
             {
               "options": {
