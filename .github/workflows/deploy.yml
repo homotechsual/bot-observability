@@ -24,6 +24,7 @@ jobs:
           HALO_LOG_PATH: /tmp/halo-logs
           PANDA_LOG_PATH: /tmp/panda-logs
           HUDU_LOG_PATH: /tmp/hudu-logs
+          HOMOTECHSUAL_LOG_PATH: /tmp/homotechsual-logs
         run: docker compose -f docker-compose.yml config >/dev/null
 
   deploy:
