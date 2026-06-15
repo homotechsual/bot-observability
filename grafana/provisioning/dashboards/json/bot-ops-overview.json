@@ -49,7 +49,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 1 },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 1 },
       "id": 1,
       "options": {
         "colorMode": "background",
@@ -92,7 +92,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 1 },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 1 },
       "id": 2,
       "options": {
         "colorMode": "background",
@@ -135,7 +135,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 1 },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 1 },
       "id": 3,
       "options": {
         "colorMode": "background",
@@ -153,6 +153,49 @@
         }
       ],
       "title": "HuduCommunityBot",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "options": {
+                "0": { "color": "red", "text": "Down" },
+                "1": { "color": "green", "text": "Up" }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": 0 },
+              { "color": "green", "value": 1 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 1 },
+      "id": 30,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "expr": "max(max_over_time(((monitor_status{monitor_name=~\".*([Hh]omotechsual).*\"}) or (monitor_status{name=~\".*([Hh]omotechsual).*\"}) or (monitor_status{monitor=~\".*([Hh]omotechsual).*\"}) or (monitor_status{friendly_name=~\".*([Hh]omotechsual).*\"}))[10m:])) or vector(0)",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "HomotechsualBot",
       "type": "stat"
     },
     {
@@ -178,7 +221,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 6 },
+      "gridPos": { "h": 4, "w": 3, "x": 0, "y": 6 },
       "id": 10,
       "options": {
         "colorMode": "background",
@@ -215,7 +258,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 6 },
+      "gridPos": { "h": 4, "w": 3, "x": 3, "y": 6 },
       "id": 11,
       "options": {
         "colorMode": "background",
@@ -252,7 +295,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 6 },
+      "gridPos": { "h": 4, "w": 3, "x": 6, "y": 6 },
       "id": 12,
       "options": {
         "colorMode": "background",
@@ -289,7 +332,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 6 },
+      "gridPos": { "h": 4, "w": 3, "x": 9, "y": 6 },
       "id": 13,
       "options": {
         "colorMode": "background",
@@ -326,7 +369,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 6 },
+      "gridPos": { "h": 4, "w": 3, "x": 12, "y": 6 },
       "id": 14,
       "options": {
         "colorMode": "background",
@@ -363,7 +406,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 6 },
+      "gridPos": { "h": 4, "w": 3, "x": 15, "y": 6 },
       "id": 15,
       "options": {
         "colorMode": "background",
@@ -382,6 +425,80 @@
         }
       ],
       "title": "HuduCommunityBot Warnings",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 1 },
+              { "color": "red", "value": 5 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 3, "x": 18, "y": 6 },
+      "id": 31,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "sum(count_over_time({service=~\"homotechsual-bot\"} |= \"[ERR]\" [$__range]))",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "HomotechsualBot Errors",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 5 },
+              { "color": "red", "value": 20 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 3, "x": 21, "y": 6 },
+      "id": 32,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "sum(count_over_time({service=~\"homotechsual-bot\"} |= \"[WRN]\" [$__range]))",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "HomotechsualBot Warnings",
       "type": "stat"
     },
     {
@@ -420,6 +537,10 @@
           {
             "matcher": { "id": "byRegexp", "options": ".*hudu.*" },
             "properties": [{ "id": "displayName", "value": "HuduCommunityBot" }]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": ".*homotechsual.*" },
+            "properties": [{ "id": "displayName", "value": "HomotechsualBot" }]
           }
         ]
       },
@@ -469,6 +590,10 @@
           {
             "matcher": { "id": "byRegexp", "options": ".*hudu.*" },
             "properties": [{ "id": "displayName", "value": "HuduCommunityBot" }]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": ".*homotechsual.*" },
+            "properties": [{ "id": "displayName", "value": "HomotechsualBot" }]
           }
         ]
       },
@@ -518,6 +643,10 @@
           {
             "matcher": { "id": "byRegexp", "options": ".*hudu.*" },
             "properties": [{ "id": "displayName", "value": "HuduCommunityBot" }]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": ".*homotechsual.*" },
+            "properties": [{ "id": "displayName", "value": "HomotechsualBot" }]
           }
         ]
       },
@@ -647,6 +776,10 @@
           {
             "matcher": { "id": "byRegexp", "options": ".*[Hh]udu.*" },
             "properties": [{ "id": "displayName", "value": "HuduCommunityBot" }]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": ".*[Hh]omotechsual.*" },
+            "properties": [{ "id": "displayName", "value": "HomotechsualBot" }]
           }
         ]
       },
@@ -659,7 +792,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "monitor_status{monitor_name=~\".*([Hh]alo|[Hh]alo[Cc]ommunity|[Pp]anda|[Pp]andamonium|[Hh]udu|[Hh]udu[Cc]ommunity).*\"}",
+          "expr": "monitor_status{monitor_name=~\".*([Hh]alo|[Hh]alo[Cc]ommunity|[Pp]anda|[Pp]andamonium|[Hh]udu|[Hh]udu[Cc]ommunity|[Hh]omotechsual).*\"}",
           "legendFormat": "{{monitor_name}}",
           "refId": "A"
         }
@@ -753,19 +886,20 @@
   "templating": {
     "list": [
       {
-        "current": { "selected": true, "text": "All Bots", "value": "halo-bot|panda-bot|hudu-bot" },
+        "current": { "selected": true, "text": "All Bots", "value": "halo-bot|panda-bot|hudu-bot|homotechsual-bot" },
         "hide": 0,
         "includeAll": false,
         "label": "Bot",
         "multi": false,
         "name": "log_bot",
         "options": [
-          { "selected": true,  "text": "All Bots",          "value": "halo-bot|panda-bot|hudu-bot" },
+          { "selected": true,  "text": "All Bots",          "value": "halo-bot|panda-bot|hudu-bot|homotechsual-bot" },
           { "selected": false, "text": "HaloCommunityBot",  "value": "halo-bot" },
           { "selected": false, "text": "PandaBot",          "value": "panda-bot" },
-          { "selected": false, "text": "HuduCommunityBot",  "value": "hudu-bot" }
+          { "selected": false, "text": "HuduCommunityBot",  "value": "hudu-bot" },
+          { "selected": false, "text": "HomotechsualBot",   "value": "homotechsual-bot" }
         ],
-        "query": "All Bots : halo-bot|panda-bot|hudu-bot, HaloCommunityBot : halo-bot, PandaBot : panda-bot, HuduCommunityBot : hudu-bot",
+        "query": "All Bots : halo-bot|panda-bot|hudu-bot|homotechsual-bot, HaloCommunityBot : halo-bot, PandaBot : panda-bot, HuduCommunityBot : hudu-bot, HomotechsualBot : homotechsual-bot",
         "skipUrlSync": false,
         "type": "custom"
       },
@@ -852,6 +986,6 @@
   "timezone": "browser",
   "title": "Bot Ops Overview v2",
   "uid": "bot-ops-overview-v2",
-  "version": 103,
+  "version": 104,
   "weekStart": ""
 }

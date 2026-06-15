@@ -55,13 +55,13 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"youtube\"} |= \"Posted YouTube video\" [30d])) or on() vector(0)",
+          "expr": "sum(count_over_time({service=~\"halo-bot|hudu-bot|homotechsual-bot\",component=\"youtube\"} |= \"Posted YouTube video\" [30d])) or on() vector(0)",
           "instant": true,
           "queryType": "instant",
           "refId": "A"
         }
       ],
-      "title": "YouTube Posts (Halo + Hudu)",
+      "title": "YouTube Posts (All Bots)",
       "type": "stat"
     },
     {
@@ -165,7 +165,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{service=~\"halo-bot|hudu-bot\",component=\"youtube\"} |= \"Posted YouTube video\"",
+          "expr": "{service=~\"halo-bot|hudu-bot|homotechsual-bot\",component=\"youtube\"} |= \"Posted YouTube video\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -320,7 +320,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"youtube\"} |= \"Observed YouTube candidate video\" [30d])) - sum(count_over_time({service=~\"halo-bot|hudu-bot\",component=\"youtube\"} |= \"Posted YouTube video\" [30d]))",
+          "expr": "sum(count_over_time({service=~\"halo-bot|hudu-bot|homotechsual-bot\",component=\"youtube\"} |= \"Observed YouTube candidate video\" [30d])) - sum(count_over_time({service=~\"halo-bot|hudu-bot|homotechsual-bot\",component=\"youtube\"} |= \"Posted YouTube video\" [30d]))",
           "instant": true,
           "queryType": "instant",
           "refId": "A"
@@ -423,7 +423,7 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{service=~\"halo-bot|hudu-bot\",component=\"youtube\"} |= \"Observed YouTube candidate video\"",
+          "expr": "{service=~\"halo-bot|hudu-bot|homotechsual-bot\",component=\"youtube\"} |= \"Observed YouTube candidate video\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -720,7 +720,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 74 },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 74 },
       "id": 22,
       "options": {
         "colorMode": "background",
@@ -758,7 +758,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 74 },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 74 },
       "id": 24,
       "options": {
         "colorMode": "background",
@@ -804,7 +804,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 74 },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 74 },
       "id": 23,
       "options": {
         "colorMode": "background",
@@ -823,6 +823,44 @@
         }
       ],
       "title": "YouTube Raw Feed Scrape Health",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 74 },
+      "id": 27,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "raw_feed_youtube_discovered_channels_by_source{source=\"homotechsual\"} or on() vector(0)",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Homotechsual YouTube Channels Configured (Bot Endpoint)",
       "type": "stat"
     },
     {
@@ -932,6 +970,6 @@
   "timezone": "browser",
   "title": "Feed Ingestion Audit",
   "uid": "bot-feed-ingestion-audit",
-  "version": 5,
+  "version": 6,
   "weekStart": ""
 }
