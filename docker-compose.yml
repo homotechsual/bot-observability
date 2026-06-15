@@ -51,6 +51,7 @@ services:
       - ${HALO_LOG_PATH}:/logs/halo:ro
       - ${PANDA_LOG_PATH}:/logs/panda:ro
       - ${HUDU_LOG_PATH}:/logs/hudu:ro
+      - ${HOMOTECHSUAL_LOG_PATH}:/logs/homotechsual:ro
     depends_on:
       - loki
 
@@ -101,6 +102,7 @@ services:
       - YOUTUBE_FEED_URLS=${YOUTUBE_FEED_URLS:-}
       - HALO_YOUTUBE_FEED_URLS_ENDPOINT=${HALO_YOUTUBE_FEED_URLS_ENDPOINT:-http://host.docker.internal:9191/observability/youtube-feed-urls}
       - HUDU_YOUTUBE_FEED_URLS_ENDPOINT=${HUDU_YOUTUBE_FEED_URLS_ENDPOINT:-http://host.docker.internal:9192/observability/youtube-feed-urls}
+      - HOMOTECHSUAL_YOUTUBE_FEED_URLS_ENDPOINT=${HOMOTECHSUAL_YOUTUBE_FEED_URLS_ENDPOINT:-http://host.docker.internal:9194/observability/youtube-feed-urls}
       - RAW_FEED_EXPORTER_PORT=9115
       - RAW_FEED_TIMEOUT_SECONDS=20
       - RAW_FEED_CACHE_SECONDS=60

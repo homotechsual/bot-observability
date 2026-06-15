@@ -39,3 +39,9 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets: ["host.docker.internal:9093"]
+
+  - job_name: homotechsual-bot
+    scrape_interval: 30s
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["host.docker.internal:9094"]
