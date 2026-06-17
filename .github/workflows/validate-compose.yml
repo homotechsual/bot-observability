@@ -21,6 +21,7 @@ jobs:
           PANDA_LOG_PATH: /tmp/panda-logs
           HUDU_LOG_PATH: /tmp/hudu-logs
           HOMOTECHSUAL_LOG_PATH: /tmp/homotechsual-logs
+          BRAN_LOG_PATH: /tmp/bran-logs
         run: docker compose -f docker-compose.yml config >/dev/null
 
       - name: Validate dashboard JSON files
