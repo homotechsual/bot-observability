@@ -52,6 +52,7 @@ services:
       - ${PANDA_LOG_PATH}:/logs/panda:ro
       - ${HUDU_LOG_PATH}:/logs/hudu:ro
       - ${HOMOTECHSUAL_LOG_PATH}:/logs/homotechsual:ro
+      - ${BRAN_LOG_PATH}:/logs/bran:ro
     depends_on:
       - loki
 

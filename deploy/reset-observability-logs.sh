@@ -95,6 +95,7 @@ truncate_logs "${HALO_LOG_PATH:-}" "Halo"
 truncate_logs "${PANDA_LOG_PATH:-}" "Panda"
 truncate_logs "${HUDU_LOG_PATH:-}" "Hudu"
 truncate_logs "${HOMOTECHSUAL_LOG_PATH:-}" "Homotechsual"
+truncate_logs "${BRAN_LOG_PATH:-}" "Bran"
 
 echo "[reset] Removing Loki data volume(s)"
 mapfile -t loki_volumes < <(find_loki_volumes)

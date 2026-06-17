@@ -174,3 +174,37 @@ scrape_configs:
           job: homotechsual-bot
           service: homotechsual-bot
           __path__: /logs/homotechsual/*.log
+
+  - job_name: bran-bot
+    pipeline_stages:
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2} '
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2} [^\[]+) \[(?P<level>[A-Z]{3})\] (?P<source_context>[^ ]+) (?P<message>(?s:.*))$'
+      - labels:
+          level:
+          source_context:
+      - static_labels:
+          component: other
+      - match:
+          selector: '{source_context=~".*[Yy]outube.*"}'
+          stages:
+            - static_labels:
+                component: youtube
+      - match:
+          selector: '{source_context=~".*[Hh]eartbeat.*"}'
+          stages:
+            - static_labels:
+                component: heartbeat
+      - match:
+          selector: '{source_context=~".*([Dd]iscord[Bb]ot[Ss]ervice|[Gg]ateway).*"}'
+          stages:
+            - static_labels:
+                component: discord
+    static_configs:
+      - targets: [localhost]
+        labels:
+          job: bran-bot
+          service: bran-bot
+          __path__: /logs/bran/*.log

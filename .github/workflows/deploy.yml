@@ -25,6 +25,7 @@ jobs:
           PANDA_LOG_PATH: /tmp/panda-logs
           HUDU_LOG_PATH: /tmp/hudu-logs
           HOMOTECHSUAL_LOG_PATH: /tmp/homotechsual-logs
+          BRAN_LOG_PATH: /tmp/bran-logs
         run: docker compose -f docker-compose.yml config >/dev/null
 
   deploy:
@@ -272,6 +273,7 @@ jobs:
           PANDA_LOG_PATH=${{ secrets.PANDA_LOG_PATH }}
           HUDU_LOG_PATH=${{ secrets.HUDU_LOG_PATH }}
           HOMOTECHSUAL_LOG_PATH=${{ secrets.HOMOTECHSUAL_LOG_PATH }}
+          BRAN_LOG_PATH=${{ secrets.BRAN_LOG_PATH }}
           HALO_YOUTUBE_FEED_URLS_ENDPOINT=${{ secrets.HALO_YOUTUBE_FEED_URLS_ENDPOINT }}
           HUDU_YOUTUBE_FEED_URLS_ENDPOINT=${{ secrets.HUDU_YOUTUBE_FEED_URLS_ENDPOINT }}
           HOMOTECHSUAL_YOUTUBE_FEED_URLS_ENDPOINT=${{ secrets.HOMOTECHSUAL_YOUTUBE_FEED_URLS_ENDPOINT }}

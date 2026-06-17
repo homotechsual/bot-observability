@@ -886,20 +886,21 @@
   "templating": {
     "list": [
       {
-        "current": { "selected": true, "text": "All Bots", "value": "halo-bot|panda-bot|hudu-bot|homotechsual-bot" },
+        "current": { "selected": true, "text": "All Bots", "value": "halo-bot|panda-bot|hudu-bot|homotechsual-bot|bran-bot" },
         "hide": 0,
         "includeAll": false,
         "label": "Bot",
         "multi": false,
         "name": "log_bot",
         "options": [
-          { "selected": true,  "text": "All Bots",          "value": "halo-bot|panda-bot|hudu-bot|homotechsual-bot" },
+          { "selected": true,  "text": "All Bots",          "value": "halo-bot|panda-bot|hudu-bot|homotechsual-bot|bran-bot" },
           { "selected": false, "text": "HaloCommunityBot",  "value": "halo-bot" },
           { "selected": false, "text": "PandaBot",          "value": "panda-bot" },
           { "selected": false, "text": "HuduCommunityBot",  "value": "hudu-bot" },
-          { "selected": false, "text": "HomotechsualBot",   "value": "homotechsual-bot" }
+          { "selected": false, "text": "HomotechsualBot",   "value": "homotechsual-bot" },
+          { "selected": false, "text": "BranBot",           "value": "bran-bot" }
         ],
-        "query": "All Bots : halo-bot|panda-bot|hudu-bot|homotechsual-bot, HaloCommunityBot : halo-bot, PandaBot : panda-bot, HuduCommunityBot : hudu-bot, HomotechsualBot : homotechsual-bot",
+        "query": "All Bots : halo-bot|panda-bot|hudu-bot|homotechsual-bot|bran-bot, HaloCommunityBot : halo-bot, PandaBot : panda-bot, HuduCommunityBot : hudu-bot, HomotechsualBot : homotechsual-bot, BranBot : bran-bot",
         "skipUrlSync": false,
         "type": "custom"
       },
