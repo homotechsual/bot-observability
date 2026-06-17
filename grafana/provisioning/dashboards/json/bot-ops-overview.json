@@ -938,7 +938,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Br\\u00e2n"
+                "value": "Brân"
               }
             ]
           }
@@ -1630,7 +1630,7 @@
           "refId": "A"
         }
       ],
-      "title": "Br\\u00e2n",
+      "title": "Brân",
       "type": "stat"
     },
     {
@@ -1695,7 +1695,7 @@
           "refId": "A"
         }
       ],
-      "title": "Br\\u00e2n Errors",
+      "title": "Brân Errors",
       "type": "stat"
     },
     {
@@ -1760,7 +1760,7 @@
           "refId": "A"
         }
       ],
-      "title": "Br\\u00e2n Warnings",
+      "title": "Brân Warnings",
       "type": "stat"
     }
   ],
