@@ -3,7 +3,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -21,20 +24,34 @@
   "panels": [
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
       "id": 20,
       "title": "Bot Status",
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
       "fieldConfig": {
         "defaults": {
           "mappings": [
             {
               "options": {
-                "0": { "color": "red", "text": "Down" },
-                "1": { "color": "green", "text": "Up" }
+                "0": {
+                  "color": "red",
+                  "text": "Down"
+                },
+                "1": {
+                  "color": "green",
+                  "text": "Up"
+                }
               },
               "type": "value"
             }
@@ -42,21 +59,38 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "red", "value": 0 },
-              { "color": "green", "value": 1 }
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
             ]
           }
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 1 },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 1
+      },
       "id": 1,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "textMode": "auto"
       },
       "targets": [
@@ -70,14 +104,23 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
       "fieldConfig": {
         "defaults": {
           "mappings": [
             {
               "options": {
-                "0": { "color": "red", "text": "Down" },
-                "1": { "color": "green", "text": "Up" }
+                "0": {
+                  "color": "red",
+                  "text": "Down"
+                },
+                "1": {
+                  "color": "green",
+                  "text": "Up"
+                }
               },
               "type": "value"
             }
@@ -85,21 +128,38 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "red", "value": 0 },
-              { "color": "green", "value": 1 }
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
             ]
           }
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 1 },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      },
       "id": 2,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "textMode": "auto"
       },
       "targets": [
@@ -113,14 +173,23 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
       "fieldConfig": {
         "defaults": {
           "mappings": [
             {
               "options": {
-                "0": { "color": "red", "text": "Down" },
-                "1": { "color": "green", "text": "Up" }
+                "0": {
+                  "color": "red",
+                  "text": "Down"
+                },
+                "1": {
+                  "color": "green",
+                  "text": "Up"
+                }
               },
               "type": "value"
             }
@@ -128,21 +197,38 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "red", "value": 0 },
-              { "color": "green", "value": 1 }
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
             ]
           }
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 1 },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 1
+      },
       "id": 3,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "textMode": "auto"
       },
       "targets": [
@@ -156,14 +242,23 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
       "fieldConfig": {
         "defaults": {
           "mappings": [
             {
               "options": {
-                "0": { "color": "red", "text": "Down" },
-                "1": { "color": "green", "text": "Up" }
+                "0": {
+                  "color": "red",
+                  "text": "Down"
+                },
+                "1": {
+                  "color": "green",
+                  "text": "Up"
+                }
               },
               "type": "value"
             }
@@ -171,21 +266,38 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "red", "value": 0 },
-              { "color": "green", "value": 1 }
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
             ]
           }
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 1 },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      },
       "id": 30,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "textMode": "auto"
       },
       "targets": [
@@ -200,40 +312,73 @@
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
       "id": 21,
       "title": "Selected Range Summary",
       "type": "row"
     },
     {
-      "datasource": { "type": "loki", "uid": "loki" },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "orange", "value": 1 },
-              { "color": "red", "value": 5 }
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
             ]
           }
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 3, "x": 0, "y": 6 },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 0,
+        "y": 6
+      },
       "id": 10,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "textMode": "auto"
       },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "sum(count_over_time({service=~\"halo-bot\"} |= \"[ERR]\" [$__range]))",
           "queryType": "range",
           "refId": "A"
@@ -243,34 +388,62 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "loki", "uid": "loki" },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "orange", "value": 5 },
-              { "color": "red", "value": 20 }
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 20
+              }
             ]
           }
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 3, "x": 3, "y": 6 },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 3,
+        "y": 6
+      },
       "id": 11,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "textMode": "auto"
       },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "sum(count_over_time({service=~\"halo-bot\"} |= \"[WRN]\" [$__range]))",
           "queryType": "range",
           "refId": "A"
@@ -280,34 +453,62 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "loki", "uid": "loki" },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "orange", "value": 1 },
-              { "color": "red", "value": 5 }
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
             ]
           }
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 3, "x": 6, "y": 6 },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 6,
+        "y": 6
+      },
       "id": 12,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "textMode": "auto"
       },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "sum(count_over_time({service=~\"panda-bot\"} |= \"[ERR]\" [$__range]))",
           "queryType": "range",
           "refId": "A"
@@ -317,34 +518,62 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "loki", "uid": "loki" },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "orange", "value": 5 },
-              { "color": "red", "value": 20 }
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 20
+              }
             ]
           }
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 3, "x": 9, "y": 6 },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 9,
+        "y": 6
+      },
       "id": 13,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "textMode": "auto"
       },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "sum(count_over_time({service=~\"panda-bot\"} |= \"[WRN]\" [$__range]))",
           "queryType": "range",
           "refId": "A"
@@ -354,34 +583,62 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "loki", "uid": "loki" },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "orange", "value": 1 },
-              { "color": "red", "value": 5 }
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
             ]
           }
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 3, "x": 12, "y": 6 },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 12,
+        "y": 6
+      },
       "id": 14,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "textMode": "auto"
       },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "sum(count_over_time({service=~\"hudu-bot\"} |= \"[ERR]\" [$__range]))",
           "queryType": "range",
           "refId": "A"
@@ -391,34 +648,62 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "loki", "uid": "loki" },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "orange", "value": 5 },
-              { "color": "red", "value": 20 }
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 20
+              }
             ]
           }
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 3, "x": 15, "y": 6 },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 15,
+        "y": 6
+      },
       "id": 15,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "textMode": "auto"
       },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "sum(count_over_time({service=~\"hudu-bot\"} |= \"[WRN]\" [$__range]))",
           "queryType": "range",
           "refId": "A"
@@ -428,34 +713,62 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "loki", "uid": "loki" },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "orange", "value": 1 },
-              { "color": "red", "value": 5 }
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
             ]
           }
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 3, "x": 18, "y": 6 },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 18,
+        "y": 6
+      },
       "id": 31,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "textMode": "auto"
       },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "sum(count_over_time({service=~\"homotechsual-bot\"} |= \"[ERR]\" [$__range]))",
           "queryType": "range",
           "refId": "A"
@@ -465,34 +778,62 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "loki", "uid": "loki" },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "orange", "value": 5 },
-              { "color": "red", "value": 20 }
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 20
+              }
             ]
           }
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 3, "x": 21, "y": 6 },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 21,
+        "y": 6
+      },
       "id": 32,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "textMode": "auto"
       },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "sum(count_over_time({service=~\"homotechsual-bot\"} |= \"[WRN]\" [$__range]))",
           "queryType": "range",
           "refId": "A"
@@ -503,16 +844,26 @@
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 10 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
       "id": 22,
       "title": "Activity Over Time",
       "type": "row"
     },
     {
-      "datasource": { "type": "loki", "uid": "loki" },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
+          "color": {
+            "mode": "palette-classic"
+          },
           "custom": {
             "drawStyle": "line",
             "fillOpacity": 10,
@@ -521,38 +872,105 @@
             "pointSize": 5,
             "showPoints": "never",
             "spanNulls": false,
-            "stacking": { "group": "A", "mode": "none" },
-            "thresholdsStyle": { "mode": "off" }
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           }
         },
         "overrides": [
           {
-            "matcher": { "id": "byRegexp", "options": ".*halo.*" },
-            "properties": [{ "id": "displayName", "value": "HaloCommunityBot" }]
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*halo.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "HaloCommunityBot"
+              }
+            ]
           },
           {
-            "matcher": { "id": "byRegexp", "options": ".*panda.*" },
-            "properties": [{ "id": "displayName", "value": "PandaBot" }]
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*panda.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "PandaBot"
+              }
+            ]
           },
           {
-            "matcher": { "id": "byRegexp", "options": ".*hudu.*" },
-            "properties": [{ "id": "displayName", "value": "HuduCommunityBot" }]
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*hudu.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "HuduCommunityBot"
+              }
+            ]
           },
           {
-            "matcher": { "id": "byRegexp", "options": ".*homotechsual.*" },
-            "properties": [{ "id": "displayName", "value": "HomotechsualBot" }]
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*homotechsual.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "HomotechsualBot"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*bran.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Br\\u00e2n"
+              }
+            ]
           }
         ]
       },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 11 },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
       "id": 9,
       "options": {
-        "legend": { "calcs": ["sum"], "displayMode": "table", "placement": "right", "showLegend": true },
-        "tooltip": { "mode": "multi", "sort": "desc" }
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
       },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "sum by (service) (count_over_time({service=~\"$log_bot\"} [5m]))",
           "legendFormat": "{{service}}",
           "queryType": "range",
@@ -563,10 +981,15 @@
       "type": "timeseries"
     },
     {
-      "datasource": { "type": "loki", "uid": "loki" },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
+          "color": {
+            "mode": "palette-classic"
+          },
           "custom": {
             "drawStyle": "bars",
             "fillOpacity": 60,
@@ -574,38 +997,93 @@
             "pointSize": 5,
             "showPoints": "never",
             "spanNulls": false,
-            "stacking": { "group": "A", "mode": "none" },
-            "thresholdsStyle": { "mode": "off" }
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           }
         },
         "overrides": [
           {
-            "matcher": { "id": "byRegexp", "options": ".*halo.*" },
-            "properties": [{ "id": "displayName", "value": "HaloCommunityBot" }]
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*halo.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "HaloCommunityBot"
+              }
+            ]
           },
           {
-            "matcher": { "id": "byRegexp", "options": ".*panda.*" },
-            "properties": [{ "id": "displayName", "value": "PandaBot" }]
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*panda.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "PandaBot"
+              }
+            ]
           },
           {
-            "matcher": { "id": "byRegexp", "options": ".*hudu.*" },
-            "properties": [{ "id": "displayName", "value": "HuduCommunityBot" }]
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*hudu.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "HuduCommunityBot"
+              }
+            ]
           },
           {
-            "matcher": { "id": "byRegexp", "options": ".*homotechsual.*" },
-            "properties": [{ "id": "displayName", "value": "HomotechsualBot" }]
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*homotechsual.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "HomotechsualBot"
+              }
+            ]
           }
         ]
       },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 19 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 23
+      },
       "id": 4,
       "options": {
-        "legend": { "calcs": ["sum"], "displayMode": "table", "placement": "bottom", "showLegend": true },
-        "tooltip": { "mode": "multi", "sort": "desc" }
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
       },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "sum by (service) (count_over_time({service=~\"$log_bot\"} |= \"[ERR]\" [5m]))",
           "legendFormat": "{{service}}",
           "queryType": "range",
@@ -616,10 +1094,15 @@
       "type": "timeseries"
     },
     {
-      "datasource": { "type": "loki", "uid": "loki" },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
+          "color": {
+            "mode": "palette-classic"
+          },
           "custom": {
             "drawStyle": "bars",
             "fillOpacity": 60,
@@ -627,38 +1110,93 @@
             "pointSize": 5,
             "showPoints": "never",
             "spanNulls": false,
-            "stacking": { "group": "A", "mode": "none" },
-            "thresholdsStyle": { "mode": "off" }
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           }
         },
         "overrides": [
           {
-            "matcher": { "id": "byRegexp", "options": ".*halo.*" },
-            "properties": [{ "id": "displayName", "value": "HaloCommunityBot" }]
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*halo.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "HaloCommunityBot"
+              }
+            ]
           },
           {
-            "matcher": { "id": "byRegexp", "options": ".*panda.*" },
-            "properties": [{ "id": "displayName", "value": "PandaBot" }]
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*panda.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "PandaBot"
+              }
+            ]
           },
           {
-            "matcher": { "id": "byRegexp", "options": ".*hudu.*" },
-            "properties": [{ "id": "displayName", "value": "HuduCommunityBot" }]
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*hudu.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "HuduCommunityBot"
+              }
+            ]
           },
           {
-            "matcher": { "id": "byRegexp", "options": ".*homotechsual.*" },
-            "properties": [{ "id": "displayName", "value": "HomotechsualBot" }]
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*homotechsual.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "HomotechsualBot"
+              }
+            ]
           }
         ]
       },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 19 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 23
+      },
       "id": 5,
       "options": {
-        "legend": { "calcs": ["sum"], "displayMode": "table", "placement": "bottom", "showLegend": true },
-        "tooltip": { "mode": "multi", "sort": "desc" }
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
       },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "sum by (service) (count_over_time({service=~\"$log_bot\"} |= \"[WRN]\" [5m]))",
           "legendFormat": "{{service}}",
           "queryType": "range",
@@ -670,14 +1208,27 @@
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 27 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 31
+      },
       "id": 23,
       "title": "Logs",
       "type": "row"
     },
     {
-      "datasource": { "type": "loki", "uid": "loki" },
-      "gridPos": { "h": 12, "w": 12, "x": 0, "y": 28 },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 0,
+        "y": 32
+      },
       "id": 7,
       "timeFrom": "1h",
       "options": {
@@ -692,7 +1243,10 @@
       },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "{service=~\"$log_bot\",component=~\"$log_component\"} |= \"[ERR]\" |~ \"$log_signal\"",
           "queryType": "range",
           "refId": "A"
@@ -702,8 +1256,16 @@
       "type": "logs"
     },
     {
-      "datasource": { "type": "loki", "uid": "loki" },
-      "gridPos": { "h": 12, "w": 12, "x": 12, "y": 28 },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 12,
+        "y": 32
+      },
       "id": 16,
       "timeFrom": "1h",
       "options": {
@@ -718,7 +1280,10 @@
       },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "{service=~\"$log_bot\",component=~\"$log_component\"} |~ \"$log_severity\" |~ \"$log_signal\"",
           "queryType": "range",
           "refId": "A"
@@ -729,16 +1294,26 @@
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 40 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 44
+      },
       "id": 24,
       "title": "Status History",
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
+          "color": {
+            "mode": "palette-classic"
+          },
           "custom": {
             "drawStyle": "line",
             "fillOpacity": 10,
@@ -747,16 +1322,29 @@
             "pointSize": 5,
             "showPoints": "never",
             "spanNulls": false,
-            "stacking": { "group": "A", "mode": "none" },
-            "thresholdsStyle": { "mode": "off" }
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [
             {
               "options": {
-                "0": { "text": "Down" },
-                "1": { "text": "Up" },
-                "2": { "text": "Pending" },
-                "3": { "text": "Maintenance" }
+                "0": {
+                  "text": "Down"
+                },
+                "1": {
+                  "text": "Up"
+                },
+                "2": {
+                  "text": "Pending"
+                },
+                "3": {
+                  "text": "Maintenance"
+                }
               },
               "type": "value"
             }
@@ -766,32 +1354,82 @@
         },
         "overrides": [
           {
-            "matcher": { "id": "byRegexp", "options": ".*[Hh]alo.*" },
-            "properties": [{ "id": "displayName", "value": "HaloCommunityBot" }]
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*[Hh]alo.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "HaloCommunityBot"
+              }
+            ]
           },
           {
-            "matcher": { "id": "byRegexp", "options": ".*[Pp]anda.*" },
-            "properties": [{ "id": "displayName", "value": "PandaBot" }]
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*[Pp]anda.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "PandaBot"
+              }
+            ]
           },
           {
-            "matcher": { "id": "byRegexp", "options": ".*[Hh]udu.*" },
-            "properties": [{ "id": "displayName", "value": "HuduCommunityBot" }]
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*[Hh]udu.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "HuduCommunityBot"
+              }
+            ]
           },
           {
-            "matcher": { "id": "byRegexp", "options": ".*[Hh]omotechsual.*" },
-            "properties": [{ "id": "displayName", "value": "HomotechsualBot" }]
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*[Hh]omotechsual.*"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "HomotechsualBot"
+              }
+            ]
           }
         ]
       },
-      "gridPos": { "h": 8, "w": 16, "x": 0, "y": 41 },
+      "gridPos": {
+        "h": 8,
+        "w": 16,
+        "x": 0,
+        "y": 45
+      },
       "id": 17,
       "options": {
-        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
-        "tooltip": { "mode": "multi", "sort": "none" }
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "expr": "monitor_status{monitor_name=~\".*([Hh]alo|[Hh]alo[Cc]ommunity|[Pp]anda|[Pp]andamonium|[Hh]udu|[Hh]udu[Cc]ommunity|[Hh]omotechsual).*\"}",
           "legendFormat": "{{monitor_name}}",
           "refId": "A"
@@ -801,10 +1439,15 @@
       "type": "timeseries"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "custom": {
             "drawStyle": "line",
             "fillOpacity": 10,
@@ -813,28 +1456,57 @@
             "pointSize": 5,
             "showPoints": "never",
             "spanNulls": false,
-            "stacking": { "group": "A", "mode": "none" },
-            "thresholdsStyle": { "mode": "off" }
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "red", "value": null },
-              { "color": "green", "value": 1 }
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
             ]
           }
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 41 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 45
+      },
       "id": 6,
       "options": {
-        "legend": { "calcs": ["lastNotNull"], "displayMode": "list", "placement": "bottom", "showLegend": true },
-        "tooltip": { "mode": "single", "sort": "none" }
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "expr": "up{job=\"uptime-kuma\"}",
           "legendFormat": "uptime-kuma scrape",
           "refId": "A"
@@ -845,14 +1517,27 @@
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 49 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 53
+      },
       "id": 25,
       "title": "Global Log Triage",
       "type": "row"
     },
     {
-      "datasource": { "type": "loki", "uid": "loki" },
-      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 50 },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 54
+      },
       "id": 8,
       "timeFrom": "30m",
       "options": {
@@ -867,7 +1552,10 @@
       },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "{service=~\"$log_bot\",component=~\"$log_component\"} |~ \"$log_level\" |~ \"$log_signal\"",
           "queryType": "range",
           "refId": "A"
@@ -875,6 +1563,205 @@
       ],
       "title": "All Bot Logs (Raw Stream)",
       "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "red",
+                  "text": "Down"
+                },
+                "1": {
+                  "color": "green",
+                  "text": "Up"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 16,
+        "y": 1
+      },
+      "id": 35,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "expr": "max(max_over_time(((monitor_status{monitor_name=~\".*([Bb]r.n|[Bb]ran|SDC).*\"}) or (monitor_status{name=~\".*([Bb]r.n|[Bb]ran|SDC).*\"}) or (monitor_status{monitor=~\".*([Bb]r.n|[Bb]ran|SDC).*\"}) or (monitor_status{friendly_name=~\".*([Bb]r.n|[Bb]ran|SDC).*\"}))[10m:])) or vector(0)",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Br\\u00e2n",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 0,
+        "y": 10
+      },
+      "id": 33,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({service=~\"bran-bot\"} |= \"[ERR]\" [$__range]))",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Br\\u00e2n Errors",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 20
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 3,
+        "y": 10
+      },
+      "id": 34,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({service=~\"bran-bot\"} |= \"[WRN]\" [$__range]))",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Br\\u00e2n Warnings",
+      "type": "stat"
     }
   ],
   "refresh": "5m",
@@ -886,92 +1773,220 @@
   "templating": {
     "list": [
       {
-        "current": { "selected": true, "text": "All Bots", "value": "halo-bot|panda-bot|hudu-bot|homotechsual-bot|bran-bot" },
+        "current": {
+          "selected": true,
+          "text": "All Bots",
+          "value": "halo-bot|panda-bot|hudu-bot|homotechsual-bot|bran-bot"
+        },
         "hide": 0,
         "includeAll": false,
         "label": "Bot",
         "multi": false,
         "name": "log_bot",
         "options": [
-          { "selected": true,  "text": "All Bots",          "value": "halo-bot|panda-bot|hudu-bot|homotechsual-bot|bran-bot" },
-          { "selected": false, "text": "HaloCommunityBot",  "value": "halo-bot" },
-          { "selected": false, "text": "PandaBot",          "value": "panda-bot" },
-          { "selected": false, "text": "HuduCommunityBot",  "value": "hudu-bot" },
-          { "selected": false, "text": "HomotechsualBot",   "value": "homotechsual-bot" },
-          { "selected": false, "text": "BranBot",           "value": "bran-bot" }
+          {
+            "selected": true,
+            "text": "All Bots",
+            "value": "halo-bot|panda-bot|hudu-bot|homotechsual-bot|bran-bot"
+          },
+          {
+            "selected": false,
+            "text": "HaloCommunityBot",
+            "value": "halo-bot"
+          },
+          {
+            "selected": false,
+            "text": "PandaBot",
+            "value": "panda-bot"
+          },
+          {
+            "selected": false,
+            "text": "HuduCommunityBot",
+            "value": "hudu-bot"
+          },
+          {
+            "selected": false,
+            "text": "HomotechsualBot",
+            "value": "homotechsual-bot"
+          },
+          {
+            "selected": false,
+            "text": "BranBot",
+            "value": "bran-bot"
+          }
         ],
         "query": "All Bots : halo-bot|panda-bot|hudu-bot|homotechsual-bot|bran-bot, HaloCommunityBot : halo-bot, PandaBot : panda-bot, HuduCommunityBot : hudu-bot, HomotechsualBot : homotechsual-bot, BranBot : bran-bot",
         "skipUrlSync": false,
         "type": "custom"
       },
       {
-        "current": { "selected": true, "text": "All Log Lines", "value": ".*" },
+        "current": {
+          "selected": true,
+          "text": "All Log Lines",
+          "value": ".*"
+        },
         "hide": 0,
         "includeAll": false,
         "label": "Level",
         "multi": false,
         "name": "log_level",
         "options": [
-          { "selected": true,  "text": "All Log Lines",     "value": ".*" },
-          { "selected": false, "text": "Warnings",          "value": "\\[WRN\\]" },
-          { "selected": false, "text": "Errors",            "value": "\\[ERR\\]" },
-          { "selected": false, "text": "Warnings + Errors", "value": "\\[(WRN|ERR)\\]" }
+          {
+            "selected": true,
+            "text": "All Log Lines",
+            "value": ".*"
+          },
+          {
+            "selected": false,
+            "text": "Warnings",
+            "value": "\\[WRN\\]"
+          },
+          {
+            "selected": false,
+            "text": "Errors",
+            "value": "\\[ERR\\]"
+          },
+          {
+            "selected": false,
+            "text": "Warnings + Errors",
+            "value": "\\[(WRN|ERR)\\]"
+          }
         ],
         "query": "All Log Lines : .*, Warnings : \\[WRN\\], Errors : \\[ERR\\], Warnings + Errors : \\[(WRN|ERR)\\]",
         "skipUrlSync": false,
         "type": "custom"
       },
       {
-        "current": { "selected": true, "text": "Warnings + Errors", "value": "WRN|ERR" },
+        "current": {
+          "selected": true,
+          "text": "Warnings + Errors",
+          "value": "WRN|ERR"
+        },
         "hide": 0,
         "includeAll": false,
         "label": "Severity",
         "multi": false,
         "name": "log_severity",
         "options": [
-          { "selected": true,  "text": "Warnings + Errors", "value": "WRN|ERR" },
-          { "selected": false, "text": "Warnings Only",     "value": "WRN" },
-          { "selected": false, "text": "Errors Only",       "value": "ERR" }
+          {
+            "selected": true,
+            "text": "Warnings + Errors",
+            "value": "WRN|ERR"
+          },
+          {
+            "selected": false,
+            "text": "Warnings Only",
+            "value": "WRN"
+          },
+          {
+            "selected": false,
+            "text": "Errors Only",
+            "value": "ERR"
+          }
         ],
         "query": "Warnings + Errors : WRN|ERR, Warnings Only : WRN, Errors Only : ERR",
         "skipUrlSync": false,
         "type": "custom"
       },
       {
-        "current": { "selected": true, "text": "All Components", "value": ".*" },
+        "current": {
+          "selected": true,
+          "text": "All Components",
+          "value": ".*"
+        },
         "hide": 0,
         "includeAll": false,
         "label": "Component",
         "multi": false,
         "name": "log_component",
         "options": [
-          { "selected": true,  "text": "All Components",       "value": ".*" },
-          { "selected": false, "text": "Discord",              "value": "discord" },
-          { "selected": false, "text": "Heartbeat",            "value": "heartbeat" },
-          { "selected": false, "text": "YouTube Plugin",       "value": "youtube" },
-          { "selected": false, "text": "Halo Status",          "value": "halo_status" },
-          { "selected": false, "text": "Star Citizen",         "value": "star_citizen" },
-          { "selected": false, "text": "Path of Exile",        "value": "path_of_exile" },
-          { "selected": false, "text": "Return of Reckoning",  "value": "return_of_reckoning" },
-          { "selected": false, "text": "Ashes of Creation",    "value": "ashes_of_creation" },
-          { "selected": false, "text": "Hudu API",             "value": "hudu_api" },
-          { "selected": false, "text": "Other",                "value": "other" }
+          {
+            "selected": true,
+            "text": "All Components",
+            "value": ".*"
+          },
+          {
+            "selected": false,
+            "text": "Discord",
+            "value": "discord"
+          },
+          {
+            "selected": false,
+            "text": "Heartbeat",
+            "value": "heartbeat"
+          },
+          {
+            "selected": false,
+            "text": "YouTube Plugin",
+            "value": "youtube"
+          },
+          {
+            "selected": false,
+            "text": "Halo Status",
+            "value": "halo_status"
+          },
+          {
+            "selected": false,
+            "text": "Star Citizen",
+            "value": "star_citizen"
+          },
+          {
+            "selected": false,
+            "text": "Path of Exile",
+            "value": "path_of_exile"
+          },
+          {
+            "selected": false,
+            "text": "Return of Reckoning",
+            "value": "return_of_reckoning"
+          },
+          {
+            "selected": false,
+            "text": "Ashes of Creation",
+            "value": "ashes_of_creation"
+          },
+          {
+            "selected": false,
+            "text": "Hudu API",
+            "value": "hudu_api"
+          },
+          {
+            "selected": false,
+            "text": "Other",
+            "value": "other"
+          }
         ],
         "query": "All Components : .*, Discord : discord, Heartbeat : heartbeat, YouTube Plugin : youtube, Halo Status : halo_status, Star Citizen : star_citizen, Path of Exile : path_of_exile, Return of Reckoning : return_of_reckoning, Ashes of Creation : ashes_of_creation, Hudu API : hudu_api, Other : other",
         "skipUrlSync": false,
         "type": "custom"
       },
       {
-        "current": { "selected": true, "text": "All Signals", "value": ".*" },
+        "current": {
+          "selected": true,
+          "text": "All Signals",
+          "value": ".*"
+        },
         "hide": 0,
         "includeAll": false,
         "label": "Signal",
         "multi": false,
         "name": "log_signal",
         "options": [
-          { "selected": true,  "text": "All Signals",         "value": ".*" },
-          { "selected": false, "text": "Connection Lifecycle", "value": "DiscordLifecycle" },
-          { "selected": false, "text": "Gateway Noise",        "value": "Gateway" }
+          {
+            "selected": true,
+            "text": "All Signals",
+            "value": ".*"
+          },
+          {
+            "selected": false,
+            "text": "Connection Lifecycle",
+            "value": "DiscordLifecycle"
+          },
+          {
+            "selected": false,
+            "text": "Gateway Noise",
+            "value": "Gateway"
+          }
         ],
         "query": "All Signals : .*, Connection Lifecycle : DiscordLifecycle, Gateway Noise : Gateway",
         "skipUrlSync": false,
